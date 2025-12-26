@@ -1,0 +1,33 @@
+﻿using Application.Common.Responses;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Constants;
+
+namespace Host.Controllers.Base;
+
+[Authorize]
+public class BaseAuthController : VersionedApiController
+{
+    /// <summary>
+    /// Return a success response in ResponseBase and with a message.
+    /// </summary>
+    protected OkObjectResult Ok(object value, string message) => Ok(new ResponseBase<object>(value, message));
+
+    /// <summary>
+    /// Return a success response in ResponseBase and with a message.
+    /// </summary>
+    protected OkObjectResult Ok<T>(T result, string message) => Ok(new ResponseBase<T>(result, message));
+}
+
+[Route("api/v{version:apiVersion}/admin/[controller]")]
+public class BaseAdminCustomAuthController : BaseAuthController;
+
+[Authorize(Roles = $"{AppConsts.SuperAdminRoleName}")]
+[Route("api/v{version:apiVersion}/admin/[controller]")]
+public class BaseAdminAuthController : BaseAuthController;
+
+[Route("api/v{version:apiVersion}/web/[controller]")]
+public class BaseWebAuthController : BaseAuthController;
+
+[Route("api/v{version:apiVersion}/mobile/[controller]")]
+public class BaseMobileAuthController : BaseAuthController;
