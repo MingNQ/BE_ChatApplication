@@ -1,6 +1,7 @@
 using Application.Common.Events;
 using Application.Common.Interfaces;
 using Domain.Entities.Catalog;
+using Domain.Entities.Chat;
 using Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -33,6 +34,17 @@ public class ApplicationDbContext(
     public DbSet<Role> Roles => Set<Role>();
 
     #endregion Audit
+
+    #region Chat
+
+    public DbSet<Conversation> Conversations => Set<Conversation>();
+    public DbSet<ConversationMember> ConversationMembers => Set<ConversationMember>();
+    public DbSet<ConversationReadState> ConversationReadStates => Set<ConversationReadState>();
+    public DbSet<ConversationRole> ConversationRoles => Set<ConversationRole>();
+    public DbSet<Message> Messages => Set<Message>();
+    public DbSet<MessageAttachment> MessageAttachments => Set<MessageAttachment>();
+
+    #endregion Chat
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
 

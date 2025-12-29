@@ -8,10 +8,4 @@ public class AuthConst
         public const string Facebook = "FACEBOOK";
         public const string Manual = "MANUAL";
     }
-
-    public class AuthScheme
-    {
-        public const string SmartLearn = "SMARTLEARN";
-        public const string Venue = "VENUE";
-    }
 }

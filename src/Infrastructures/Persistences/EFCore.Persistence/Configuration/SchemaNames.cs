@@ -19,4 +19,7 @@ internal static class SchemaNames
 
     // Global web configuration: site settings, themes, SEO metadata
     public const string Settings = nameof(Settings);
+
+    // Chat and messaging: conversations, messages, attachments
+    public const string Chat = nameof(Chat);
 }

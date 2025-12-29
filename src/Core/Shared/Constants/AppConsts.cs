@@ -15,6 +15,9 @@ public class AppConsts
     public const string SuperAdminRoleName = "SuperAdmin";
     public const string NormalUserRoleName = "NormalUser";
 
+    public const string AdminConversationRoleName = "Administrator";
+    public const string MemberConversationRoleName = "Member";
+
     public const string DefaultPassword = "YEWGrlapBt12Obz";
 }
 

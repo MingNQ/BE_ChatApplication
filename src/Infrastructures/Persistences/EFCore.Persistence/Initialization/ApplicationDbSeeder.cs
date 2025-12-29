@@ -1,4 +1,5 @@
 ﻿using Application.Utility;
+using Domain.Entities.Chat;
 using Domain.Entities.Identity;
 using EfCore.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,26 @@ internal class ApplicationDbSeeder(CustomSeederRunner seederRunner)
         await seederRunner.RunSeedersAsync(cancellationToken);
         await SeedRolesAsync(dbContext);
         await SeedUserDataAsync(dbContext);
+        await SeedConversationRolesAsync(dbContext);
+    }
+
+    private async Task SeedConversationRolesAsync(ApplicationDbContext dbContext)
+    {
+        var roles = new[]
+        {
+            ConversationRole.Create(AppConsts.AdminConversationRoleName),
+            ConversationRole.Create(AppConsts.MemberConversationRoleName),
+        };
+
+        foreach (var role in roles)
+        {
+            if (await dbContext.ConversationRoles.CountAsync(r => r.NormalizedName == role.NormalizedName) == 0)
+            {
+                await dbContext.ConversationRoles.AddAsync(role);
+            }
+        }
+
+        await dbContext.SaveChangesAsync();
     }
 
     private async Task SeedRolesAsync(ApplicationDbContext dbContext)
