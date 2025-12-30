@@ -31,6 +31,10 @@ public class ConversationConfiguration : IEntityTypeConfiguration<Conversation>
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(c => c.LastMessageAt);
+        builder.HasOne(c => c.ConversationReadState)
+            .WithOne()
+            .HasForeignKey<Conversation>(c => c.ConversationReadStateId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

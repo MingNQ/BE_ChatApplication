@@ -11,6 +11,12 @@ public class ConversationByUserIdSpec : Specification<Conversation, Conversation
     {
         Query.Where(conversation => conversation.Members.Any(member => member.UserId == param.UserId));
 
-        Query.OrderByDescending(conversation => conversation.LastMessageAt);
+        Query.Include(conversation => conversation.Members);
+
+        Query.Include(conversation => conversation.Messages);
+
+        Query.Include(conversation => conversation.ConversationReadState);
+
+        Query.OrderByDescending(conversation => conversation.ConversationReadState!.ReadAt);
     }
 }

@@ -11,8 +11,8 @@ public class Conversation : AuditableEntity<long>, IAggregateRoot
     [MaxLength(256)]
     public string? Name { get; private set; }
 
-    public DateTimeOffset? LastMessageAt { get; private set; }
-    public long? LastMessageId { get; private set; }
+    public long ConversationReadStateId { get; set; }
+    public virtual ConversationReadState? ConversationReadState { get; set; }
     private readonly List<ConversationMember> _members = [];
     public virtual IReadOnlyCollection<ConversationMember> Members => _members.AsReadOnly();
     private readonly List<Message> _messages = [];

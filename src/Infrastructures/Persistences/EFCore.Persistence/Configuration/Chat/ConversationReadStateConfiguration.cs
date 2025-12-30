@@ -35,6 +35,11 @@ public class ConversationReadStateConfiguration : IEntityTypeConfiguration<Conve
             .HasForeignKey(e => e.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(e => new { e.ConversationId, e.UserId }).IsUnique();
+        builder.HasOne(e => e.Conversation)
+            .WithOne()
+            .HasForeignKey<ConversationReadState>(e => e.LastReadMessageId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(e => new { e.ConversationId, e.UserId, e.LastReadMessageId }).IsUnique();
     }
 }
