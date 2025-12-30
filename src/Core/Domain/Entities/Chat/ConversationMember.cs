@@ -15,16 +15,20 @@ public class ConversationMember : AuditableEntity<long>
     public virtual Conversation? Conversation { get; set; }
     public virtual ConversationRole? ConversationRole { get; set; }
 
-    public static ConversationMember Create(long conversationId, long userId, long conversationRoleId, long? addedByUserId)
+    public static ConversationMember Create(long conversationId, long userId, long? addedByUserId)
     {
         return new ConversationMember
         {
             ConversationId = conversationId,
             UserId = userId,
-            ConversationRoleId = conversationRoleId,
             AddedByUserId = addedByUserId,
             JoinedAt = DateTimeOffset.UtcNow
         };
+    }
+
+    public void AssignRole(long conversationRoleId)
+    {
+        ConversationRoleId = conversationRoleId;
     }
 
     public void UpdateRole(long conversationRoleId)

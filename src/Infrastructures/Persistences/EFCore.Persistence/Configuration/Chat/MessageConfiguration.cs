@@ -36,5 +36,9 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
             .HasForeignKey(m => m.SenderId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(m => m.ConversationId);
+
+        builder.HasIndex(m => m.SentAt);
     }
 }

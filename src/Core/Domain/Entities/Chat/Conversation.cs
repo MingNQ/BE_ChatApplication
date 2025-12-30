@@ -11,6 +11,8 @@ public class Conversation : AuditableEntity<long>, IAggregateRoot
     [MaxLength(256)]
     public string? Name { get; private set; }
 
+    public DateTimeOffset? LastMessageAt { get; private set; }
+    public long? LastMessageId { get; private set; }
     private readonly List<ConversationMember> _members = [];
     public virtual IReadOnlyCollection<ConversationMember> Members => _members.AsReadOnly();
     private readonly List<Message> _messages = [];
@@ -32,5 +34,28 @@ public class Conversation : AuditableEntity<long>, IAggregateRoot
     public void Update(string? name)
     {
         Name = name;
+    }
+
+    public void AddMember(ConversationMember member)
+    {
+        _members.Add(member);
+    }
+
+    public void AddMembers(IEnumerable<ConversationMember> members)
+    {
+        _members.AddRange(members);
+    }
+
+    public void RemoveMember(ConversationMember member)
+    {
+        _members.Remove(member);
+    }
+
+    public void RemoveMembers(IEnumerable<ConversationMember> members)
+    {
+        foreach (var member in members)
+        {
+            _members.Remove(member);
+        }
     }
 }
