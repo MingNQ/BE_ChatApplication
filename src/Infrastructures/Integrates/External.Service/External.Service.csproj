@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Email\EmailTemplates\en\verifyemail.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MailKit" Version="4.14.1" />
     <PackageReference Include="MimeKit" Version="4.14.0" />
     <PackageReference Include="Refit" Version="9.0.2" />
@@ -15,6 +19,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Application\Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Email\EmailTemplates\en\verifyemail.html" />
   </ItemGroup>
 
 </Project>

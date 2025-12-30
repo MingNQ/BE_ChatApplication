@@ -78,7 +78,7 @@ public class InitiateSignUpCommandHandler(
         await _userRepository.InsertAsync(user, cancellationToken);
         await unitOfWork.SaveChangesAsync();
 
-        var existVerification = await verificationService.FindActiveVerification(contact, VerificationMode.SignUp);
+        var existVerification = await verificationService.FindActiveVerification(contact, VerificationMode.SignUp, user.Id);
         if (existVerification is not { IsValid: true })
         {
             var verification = UserVerification.CreateForSignUp(contact, user.Id);
@@ -226,6 +226,7 @@ public class VerifySignUpContactCommandHandler(
         {
             user.SetPhoneNumber(contact.Value);
         }
+        _userRepository.Update(user);
         await unitOfWork.SaveChangesAsync();
 
         var userDto = user.Adapt<UserProfileDto>();

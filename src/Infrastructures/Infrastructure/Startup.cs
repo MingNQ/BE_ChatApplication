@@ -3,6 +3,7 @@ using Application.Configurations;
 using EfCore.Persistence;
 using EfCore.Persistence.Context;
 using EfCore.Persistence.Initialization;
+using External.Service;
 using Infrastructure.Auth;
 using Infrastructure.Caching;
 using Infrastructure.Compression;
@@ -31,6 +32,7 @@ public static class Startup
     {
         // Register infrastructure services here
         return services
+            .AddHttpContextAccessor()
             .AddSettings()
             .AddApiVersioning(configuration)
             .AddAuth(configuration)
@@ -48,6 +50,7 @@ public static class Startup
             .AddRequestLogging(configuration)
             .AddRouting(options => options.LowercaseUrls = true)
             .AddServices()
+            .AddExternalService(configuration)
             .AddRegisterService()
             .AddCompressions();
     }

@@ -20,7 +20,6 @@ internal static class Startup
         services.AddTransient<IInitializeCacheService, InitializeCacheService>();
 
         services.AddTransient<IEmailTemplateProvider, EmailTemplateProvider>();
-        services.AddTransient<IEmailSender, EmailSender>();
         services.AddTransient<IEmailService, EmailService>();
 
         services.AddTransient<ITokenService, TokenService>();
