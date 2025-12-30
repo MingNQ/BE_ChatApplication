@@ -1,7 +1,7 @@
-using System.Security.Claims;
 using Application.Common.Interfaces;
 using Domain.Exceptions;
 using Shared.Constants;
+using System.Security.Claims;
 
 namespace Infrastructure.Auth;
 
@@ -11,9 +11,9 @@ public class CurrentUser : ICurrentUser, ICurrentUserInitializer
 
     public string? Name => _user?.Identity?.Name;
 
-    private int _userId;
+    private long _userId;
 
-    public int GetUserId() =>
+    public long GetUserId() =>
         IsAuthenticated()
             ? UserId
             : _userId;
@@ -55,8 +55,8 @@ public class CurrentUser : ICurrentUser, ICurrentUserInitializer
         }
     }
 
-    public int UserId => _user?.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId
-        ? int.Parse(userId)
+    public long UserId => _user?.FindFirstValue(ClaimTypes.NameIdentifier) is { } userId
+        ? long.Parse(userId)
         : throw new UnauthorizedException("NO_CURRENT_USER");
 
     public string Email => _user?.FindFirstValue(ClaimTypes.Email) ?? string.Empty;

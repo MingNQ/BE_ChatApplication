@@ -1,4 +1,4 @@
-using Application.Dto.Persistence.Catalog.Common;
+using Application.Dto.Common;
 using Application.Dto.Persistence.Catalog.FileStorages;
 
 namespace Application.Dto.Persistence.Catalog.WebSettings;

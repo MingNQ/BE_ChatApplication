@@ -1,6 +1,6 @@
 ﻿using Application.Common.Interfaces;
 
-namespace Application.Dto.Persistence.Catalog.Common;
+namespace Application.Dto.Common;
 
 public class SeoRequestModel : ISeoDto
 {

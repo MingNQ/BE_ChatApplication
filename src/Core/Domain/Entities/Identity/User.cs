@@ -24,6 +24,11 @@ public class User : AuditableEntity<long>, IAggregateRoot
         DomainEvents.Add(EntityCreatedEvent.WithEntity(this));
     }
 
+    public static User Create(string userName, string email, string? firstName, string? lastName)
+    {
+        return new User(userName, email, firstName, lastName);
+    }
+
     [MaxLength(50)]
     public string UserName { get; private set; } = string.Empty;
 
@@ -307,5 +312,10 @@ public class User : AuditableEntity<long>, IAggregateRoot
     public string GetFullName()
     {
         return $"{FirstName} {LastName}".Trim();
+    }
+
+    public bool IsVerified()
+    {
+        return IsVerifiedEmail == true && IsVerifiedPhone == true;
     }
 }

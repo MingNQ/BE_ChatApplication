@@ -1,7 +1,7 @@
 ﻿using Application.Common.Dto;
 using Application.Common.Interfaces;
 
-namespace Application.Dto.Persistence.Catalog.Common;
+namespace Application.Dto.Common;
 
 public class SeoDto : BasicAuditableDto<long>, ISeoDto
 {

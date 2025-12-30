@@ -6,7 +6,7 @@ public interface ICurrentUser
 {
     string? Name { get; }
 
-    int GetUserId();
+    long GetUserId();
 
     string? GetUserEmail();
 
@@ -16,7 +16,7 @@ public interface ICurrentUser
 
     IEnumerable<Claim>? GetUserClaims();
 
-    int UserId { get; }
+    long UserId { get; }
     string Email { get; }
     string Avatar { get; }
 }

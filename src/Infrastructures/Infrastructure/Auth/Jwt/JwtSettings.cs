@@ -9,6 +9,8 @@ public class JwtSettings : IValidatableObject
     public int TokenExpirationInMinutes { get; set; }
 
     public int RefreshTokenExpirationInDays { get; set; }
+    public int RememberRefreshTokenExpirationInDays { get; set; }
+    public double RememberTokenExpirationInMinutes { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

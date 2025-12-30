@@ -1,20 +1,18 @@
-using System.Security.Claims;
-
 namespace Application.Interfaces.Authentication;
 
-public interface ICurrentUser
-{
-    string? Name { get; }
+//public interface ICurrentUser
+//{
+//    string? Name { get; }
 
-    int GetUserId();
+//    long GetUserId();
 
-    string? GetUserEmail();
+//    string? GetUserEmail();
 
-    string? GetTenant();
+//    string? GetTenant();
 
-    bool IsAuthenticated();
+//    bool IsAuthenticated();
 
-    bool IsInRole(string role);
+//    bool IsInRole(string role);
 
-    IEnumerable<Claim>? GetUserClaims();
-}
+//    IEnumerable<Claim>? GetUserClaims();
+//}

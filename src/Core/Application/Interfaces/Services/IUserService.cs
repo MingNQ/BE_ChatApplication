@@ -1,4 +1,4 @@
-﻿using Application.Cqrs.Users.Commands;
+﻿using Application.Cqrs.Identity.Users.Commands;
 using Application.Dto.Authorization.Accounts;
 using Application.Dto.Authorization.Verification;
 using Application.Dto.Persistence.Catalog.User;
@@ -15,7 +15,7 @@ public interface IUserService
     /// <summary>
     /// Changes user password using current password verification
     /// </summary>
-    //Task<bool> ChangePassword(UpdatePasswordCommand request);
+    Task<bool> ChangePassword(UpdatePasswordCommand request);
 
     /// <summary>
     /// Checks if email exists in the system
@@ -30,7 +30,7 @@ public interface IUserService
     /// <summary>
     /// Gets user by ID with roles and avatar
     /// </summary>
-    Task<UserDto> GetUserByIdAsync(int userId);
+    Task<UserDto> GetUserByIdAsync(long userId);
 
     /// <summary>
     /// Registers a new user account
@@ -40,12 +40,7 @@ public interface IUserService
     /// <summary>
     /// Changes user password by user ID (admin function)
     /// </summary>
-    Task ChangePasswordAsync(long userId, string password);
-
-    /// <summary>
-    /// Changes user password
-    /// </summary>
-    Task<bool> ChangePassword(UpdatePasswordCommand request);
+    Task ChangePasswordAsync(int userId, string password);
 
     /// <summary>
     /// Initiates password reset process
