@@ -1,4 +1,4 @@
-namespace Application.Cqrs.Users.Commands;
+namespace Application.Cqrs.Identity.Users.Commands;
 
 public class UserBaseCommand
 {

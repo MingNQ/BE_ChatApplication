@@ -1,6 +1,6 @@
 using Application.Common.Interfaces;
-using Application.Cqrs.Users.Commands;
-using Application.Cqrs.Users.Queries;
+using Application.Cqrs.Identity.Users.Commands;
+using Application.Cqrs.Identity.Users.Queries;
 using Host.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

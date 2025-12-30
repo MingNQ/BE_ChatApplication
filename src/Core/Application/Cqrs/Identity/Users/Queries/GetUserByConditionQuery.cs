@@ -2,13 +2,13 @@ using Application.Common.Models;
 using Application.Common.Persistence;
 using Application.Common.Responses;
 using Application.Common.Services;
-using Application.Cqrs.Users.Params;
-using Application.Cqrs.Users.Specs;
+using Application.Cqrs.Identity.Users.Params;
+using Application.Cqrs.Identity.Users.Specs;
 using Application.Dto.Persistence.Catalog.User;
 using Domain.Entities.Identity;
 using MediatR;
 
-namespace Application.Cqrs.Users.Queries;
+namespace Application.Cqrs.Identity.Users.Queries;
 
 public class GetUserByConditionQuery : SearchUserParam,
     IRequest<ResponseBase<PaginationResponse<UserDto>>>;

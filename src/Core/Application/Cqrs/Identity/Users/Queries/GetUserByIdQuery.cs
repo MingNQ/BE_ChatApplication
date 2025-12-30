@@ -2,17 +2,17 @@ using Application.Common.Exceptions;
 using Application.Common.Persistence;
 using Application.Common.Responses;
 using Application.Common.Services;
-using Application.Cqrs.Users.Specs;
+using Application.Cqrs.Identity.Users.Specs;
 using Application.Dto.Persistence.Catalog.User;
 using Domain.Entities.Identity;
 using MediatR;
 using Shared.Constants;
 
-namespace Application.Cqrs.Users.Queries;
+namespace Application.Cqrs.Identity.Users.Queries;
 
 public class GetUserByIdQuery : IRequest<ResponseBase<UserDto>>
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
 }
 
 public class GetUserByIdQueryHandler(

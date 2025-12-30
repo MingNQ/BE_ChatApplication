@@ -1,6 +1,6 @@
 using Application.Common.Models;
 
-namespace Application.Cqrs.Users.Params;
+namespace Application.Cqrs.Identity.Users.Params;
 
 public class SearchUserParam : PaginationFilter;
 

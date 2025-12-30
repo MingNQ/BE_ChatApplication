@@ -1,12 +1,12 @@
 ﻿using Application.Common.Persistence;
 using Application.Common.Responses;
-using Application.Cqrs.Users.Specs;
+using Application.Cqrs.Identity.Users.Specs;
 using Application.Dto.Persistence.Catalog.User;
 using Domain.Entities.Identity;
 using Mapster;
 using MediatR;
 
-namespace Application.Cqrs.Users.Queries;
+namespace Application.Cqrs.Identity.Users.Queries;
 
 public class GetUserByRoleQuery : IRequest<ResponseBase<List<UserDto>>>
 {

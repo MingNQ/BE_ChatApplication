@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Constants;
 using System.Text.Json.Serialization;
 
-namespace Application.Cqrs.Users.Commands;
+namespace Application.Cqrs.Identity.Users.Commands;
 
 public class UpdateUserCommand : UserBaseCommand, IRequest<ResponseBase<UserDto>>
 {

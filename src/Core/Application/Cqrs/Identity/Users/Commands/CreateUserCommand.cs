@@ -8,7 +8,7 @@ using Mapster;
 using MediatR;
 using Shared.Constants;
 
-namespace Application.Cqrs.Users.Commands;
+namespace Application.Cqrs.Identity.Users.Commands;
 
 public class CreateUserCommand : UserBaseCommand, IRequest<ResponseBase<UserDto>>
 {

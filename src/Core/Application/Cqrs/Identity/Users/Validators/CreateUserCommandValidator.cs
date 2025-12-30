@@ -1,7 +1,7 @@
-using Application.Cqrs.Users.Commands;
+using Application.Cqrs.Identity.Users.Commands;
 using FluentValidation;
 
-namespace Application.Cqrs.Users.Validators;
+namespace Application.Cqrs.Identity.Users.Validators;
 
 public class CreateUserCommandValidator : UserValidatorBase<CreateUserCommand>
 {

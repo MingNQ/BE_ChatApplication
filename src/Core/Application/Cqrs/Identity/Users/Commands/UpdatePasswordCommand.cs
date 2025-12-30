@@ -1,10 +1,10 @@
-﻿using System.Text.Json.Serialization;
-using Application.Common.Responses;
+﻿using Application.Common.Responses;
 using Application.Interfaces.Services;
 using FluentValidation;
 using MediatR;
+using System.Text.Json.Serialization;
 
-namespace Application.Cqrs.Users.Commands;
+namespace Application.Cqrs.Identity.Users.Commands;
 
 public class UpdatePasswordCommand : IRequest<ResponseBase<bool>>
 {

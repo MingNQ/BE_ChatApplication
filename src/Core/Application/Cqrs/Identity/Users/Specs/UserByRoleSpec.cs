@@ -1,7 +1,7 @@
 ﻿using Ardalis.Specification;
 using Domain.Entities.Identity;
 
-namespace Application.Cqrs.Users.Specs;
+namespace Application.Cqrs.Identity.Users.Specs;
 
 public sealed class UserByRoleSpec : Specification<User>
 {
