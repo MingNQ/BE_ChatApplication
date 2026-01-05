@@ -11,7 +11,7 @@ namespace Host.Controllers.Manager;
 
 [ControllerName("user")]
 [Tags("Admin|User")]
-public class UserController(ICurrentUser currentUser) : BaseAdminCustomAuthController
+public class UserController(ICurrentUser currentUser) : BaseAdminAuthController
 {
     [Authorize(Roles = $"{AppConsts.SuperAdminRoleName}")]
     [HttpPost]

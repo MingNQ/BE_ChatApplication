@@ -4,6 +4,7 @@ using Host.Controllers.Base;
 using Infrastructure;
 using Infrastructure.Common;
 using Infrastructure.Common.Extensions;
+using Infrastructure.Services.Chat;
 using Logger.Logging.Serilog;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -49,6 +50,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
 
     builder.Services.AddInfrastructures(builder.Configuration);
     builder.Services.AddApplication();
+    builder.Services.AddSignalR();
 }
 
 async Task ConfigureApplication(WebApplication app, ConfigurationManager configuration, IWebHostEnvironment environment)
@@ -57,5 +59,6 @@ async Task ConfigureApplication(WebApplication app, ConfigurationManager configu
     app.UseInfrastructure(configuration, environment);
     await app.Services.InitializeCacheAsync();
     app.MapEndpoints();
+    app.MapHub<ChatHub>("/hubs/chat");
     await app.RunAsync();
 }

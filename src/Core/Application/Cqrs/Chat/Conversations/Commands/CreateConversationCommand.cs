@@ -38,9 +38,18 @@ public class CreateConversationCommandHandler(IUnitOfWork unitOfWork, ICurrentUs
 
         var conversation = Conversation.Create(request.Type, request.Name);
         var entity = await _conversationRepository.InsertAsync(conversation, cancellationToken);
+        await unitOfWork.SaveChangesAsync();
 
         var conversationMember = ConversationMember.Create(entity.Entity.Id, currentUser.UserId, null);
-        conversationMember.AssignRole(adminRole.Id);
+
+        if (request.Type == ConversationType.Group)
+        {
+            conversationMember.AssignRole(adminRole.Id);
+        }
+        else
+        {
+            conversationMember.AssignRole(memberRole.Id);
+        }
         conversation.AddMember(conversationMember);
 
         var members = new List<ConversationMember>();
@@ -53,7 +62,6 @@ public class CreateConversationCommandHandler(IUnitOfWork unitOfWork, ICurrentUs
         }
         conversation.AddMembers(members);
 
-        _conversationRepository.Update(conversation);
         await unitOfWork.SaveChangesAsync();
 
         return entity.Entity.Adapt<ConversationDto>();

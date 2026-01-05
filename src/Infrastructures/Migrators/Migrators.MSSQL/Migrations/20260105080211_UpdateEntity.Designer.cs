@@ -4,6 +4,7 @@ using EfCore.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Migrators.MSSQL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260105080211_UpdateEntity")]
+    partial class UpdateEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -363,7 +366,8 @@ namespace Migrators.MSSQL.Migrations
 
                     b.HasIndex("ConversationId");
 
-                    b.HasIndex("ConversationRoleId");
+                    b.HasIndex("ConversationRoleId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -994,8 +998,8 @@ namespace Migrators.MSSQL.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Chat.ConversationRole", "ConversationRole")
-                        .WithMany()
-                        .HasForeignKey("ConversationRoleId")
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.Chat.ConversationMember", "ConversationRoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

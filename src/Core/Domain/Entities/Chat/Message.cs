@@ -29,4 +29,9 @@ public class Message : AuditableEntity<long>
     {
         Content = content;
     }
+
+    public void AddAttachment(MessageAttachment attachment)
+    {
+        _attachments.Add(attachment);
+    }
 }

@@ -29,8 +29,8 @@ public class ConversationMemberConfiguration : IEntityTypeConfiguration<Conversa
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(cm => cm.ConversationRole)
-            .WithOne()
-            .HasForeignKey<ConversationMember>(cm => cm.ConversationRoleId)
+            .WithMany()
+            .HasForeignKey(cm => cm.ConversationRoleId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 

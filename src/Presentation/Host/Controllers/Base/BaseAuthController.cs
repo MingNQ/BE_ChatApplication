@@ -19,8 +19,8 @@ public class BaseAuthController : VersionedApiController
     protected OkObjectResult Ok<T>(T result, string message) => Ok(new ResponseBase<T>(result, message));
 }
 
-[Route("api/v{version:apiVersion}/admin/[controller]")]
-public class BaseAdminCustomAuthController : BaseAuthController;
+[Route("api/v{version:apiVersion}/client/[controller]")]
+public class BaseClientAuthController : BaseAuthController;
 
 [Authorize(Roles = $"{AppConsts.SuperAdminRoleName}")]
 [Route("api/v{version:apiVersion}/admin/[controller]")]

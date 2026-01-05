@@ -1,5 +1,6 @@
 ﻿using Domain.Common.Contracts;
 using Domain.Common.Enums;
+using Domain.Events;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities.Chat;
@@ -12,7 +13,6 @@ public class Conversation : AuditableEntity<long>, IAggregateRoot
     public string? Name { get; private set; }
 
     public long ConversationReadStateId { get; set; }
-    public virtual ConversationReadState? ConversationReadState { get; set; }
     private readonly List<ConversationMember> _members = [];
     public virtual IReadOnlyCollection<ConversationMember> Members => _members.AsReadOnly();
     private readonly List<Message> _messages = [];
@@ -57,5 +57,20 @@ public class Conversation : AuditableEntity<long>, IAggregateRoot
         {
             _members.Remove(member);
         }
+    }
+
+    public Message SendMessage(long senderId, string content)
+    {
+        if (!_members.Any(m => m.UserId == senderId))
+        {
+            throw new InvalidOperationException("Sender is not a member of the conversation.");
+        }
+
+        var message = Message.Create(Id, senderId, content);
+        _messages.Add(message);
+
+        DomainEvents.Add(new MessageSentEvent(message));
+
+        return message;
     }
 }

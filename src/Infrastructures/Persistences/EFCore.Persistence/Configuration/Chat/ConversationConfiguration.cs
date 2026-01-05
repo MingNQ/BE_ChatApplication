@@ -30,11 +30,5 @@ public class ConversationConfiguration : IEntityTypeConfiguration<Conversation>
             .HasForeignKey(m => m.ConversationId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(c => c.ConversationReadState)
-            .WithOne()
-            .HasForeignKey<Conversation>(c => c.ConversationReadStateId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

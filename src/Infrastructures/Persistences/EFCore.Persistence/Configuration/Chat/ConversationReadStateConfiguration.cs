@@ -16,12 +16,6 @@ public class ConversationReadStateConfiguration : IEntityTypeConfiguration<Conve
         builder.Property(e => e.ConversationId)
             .IsRequired();
 
-        builder.Property(e => e.UserId)
-            .IsRequired();
-
-        builder.Property(e => e.LastReadMessageId)
-            .IsRequired();
-
         builder.Property(e => e.ReadAt)
             .IsRequired();
 
