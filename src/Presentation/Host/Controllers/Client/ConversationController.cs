@@ -13,7 +13,7 @@ public class ConversationController : BaseClientAuthController
 {
     [HttpPost("search")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> GetConversationAsync([FromBody] GetMessagesByConversationIdQuery request)
+    public async Task<IActionResult> GetConversationAsync([FromBody] GetConversationByConditionQuery request)
     {
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.GetDataSuccess);

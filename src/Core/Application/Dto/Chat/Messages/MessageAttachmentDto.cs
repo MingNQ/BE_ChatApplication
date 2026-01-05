@@ -1,9 +1,8 @@
-﻿using Application.Common.Interfaces;
-using Domain.Common.Enums;
+﻿using Domain.Common.Enums;
 
 namespace Application.Dto.Chat.Messages;
 
-public class MessageAttachmentDto : IDto
+public class MessageAttachmentDto
 {
     public long Id { get; set; }
     public long MessageId { get; set; }

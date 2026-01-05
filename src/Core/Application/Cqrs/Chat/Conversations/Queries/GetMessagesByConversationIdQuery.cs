@@ -3,7 +3,6 @@ using Application.Common.Persistence;
 using Application.Cqrs.Chat.Conversations.Specs;
 using Application.Dto.Chat.Messages;
 using Domain.Entities.Chat;
-using Mapster;
 using MediatR;
 using Shared.Constants;
 
@@ -27,6 +26,6 @@ public class GetMessagesByConversationIdQueryHandler(IReadRepository<Conversatio
             throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(conversation), request.ConversationId));
         }
 
-        return conversation.Messages.Adapt<List<MessageDto>>();
+        return conversation.Messages ?? [];
     }
 }

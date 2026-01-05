@@ -1,9 +1,10 @@
-﻿using Ardalis.Specification;
+﻿using Application.Dto.Chat.Conversations;
+using Ardalis.Specification;
 using Domain.Entities.Chat;
 
 namespace Application.Cqrs.Chat.Conversations.Specs;
 
-public class MessagesByConversationIdSpec : Specification<Conversation>
+public class MessagesByConversationIdSpec : Specification<Conversation, ConversationDto>
 {
     public MessagesByConversationIdSpec(long conversationId)
     {

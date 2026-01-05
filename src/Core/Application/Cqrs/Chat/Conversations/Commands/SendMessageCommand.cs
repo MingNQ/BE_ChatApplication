@@ -43,7 +43,7 @@ public class SendMessageCommandHandler(IUnitOfWork unitOfWork, IEventPublisher e
             }
         }
 
-        await _conversationRepository.InsertAsync(conversation, cancellationToken);
+        _conversationRepository.Update(conversation);
         await unitOfWork.SaveChangesAsync();
 
         await eventPublisher.PublishAsync(new MessageSentEvent(message));
