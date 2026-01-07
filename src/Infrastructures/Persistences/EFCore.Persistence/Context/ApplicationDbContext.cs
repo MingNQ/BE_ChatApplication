@@ -3,6 +3,7 @@ using Application.Common.Interfaces;
 using Domain.Entities.Catalog;
 using Domain.Entities.Chat;
 using Domain.Entities.Identity;
+using Domain.Entities.Social;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -45,6 +46,13 @@ public class ApplicationDbContext(
     public DbSet<MessageAttachment> MessageAttachments => Set<MessageAttachment>();
 
     #endregion Chat
+
+    #region Social
+
+    public DbSet<FriendshipRequest> FriendshipRequests => Set<FriendshipRequest>();
+    public DbSet<Follow> Follows => Set<Follow>();
+
+    #endregion Social
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
 

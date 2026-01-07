@@ -22,4 +22,7 @@ internal static class SchemaNames
 
     // Chat and messaging: conversations, messages, attachments
     public const string Chat = nameof(Chat);
+
+    // Friendship and follow
+    public const string Social = nameof(Social);
 }

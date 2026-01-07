@@ -119,33 +119,29 @@ public static class SpecificationBuilderExtensions
             throw new ArgumentException("propertyExpr must be a property expression.", nameof(propertyExpr));
         }
 
-        string searchTerm = operatorSearch switch
+        var toLower = typeof(string).GetMethod(nameof(string.ToLower), Type.EmptyTypes)!;
+
+        Expression left = Expression.Call(propertyExpr, toLower);
+
+        Expression right = Expression.Constant(keyword.ToLower());
+
+        Expression body = operatorSearch switch
         {
-            FilterOperator.StartsWith => $"{keyword.ToLower(CultureInfo.CurrentCulture)}%",
-            FilterOperator.EndsWith => $"%{keyword.ToLower(CultureInfo.CurrentCulture)}",
-            FilterOperator.Contains => $"%{keyword.ToLower(CultureInfo.CurrentCulture)}%",
-            _ => throw new ArgumentException("operatorSearch is not valid.", nameof(operatorSearch))
+            FilterOperator.Contains =>
+                Expression.Call(left, nameof(string.Contains), null, right),
+
+            FilterOperator.StartsWith =>
+                Expression.Call(left, nameof(string.StartsWith), null, right),
+
+            FilterOperator.EndsWith =>
+                Expression.Call(left, nameof(string.EndsWith), null, right),
+
+            _ => throw new CustomException("operatorSearch is not valid.")
         };
 
-        // Generate lambda [ x => x.Property ] for string properties
-        // or [ x => ((object)x.Property) == null ? null : x.Property.ToString() ] for other properties
-        var selectorExpr =
-            property.PropertyType == typeof(string)
-                ? propertyExpr
-                : Expression.Condition(
-                    Expression.Equal(
-                        Expression.Convert(propertyExpr, typeof(object)),
-                        Expression.Constant(null, typeof(object))),
-                    Expression.Constant(null, typeof(string)),
-                    Expression.Call(propertyExpr, "ToString", null, null));
+        var lambda = Expression.Lambda<Func<T, bool>>(body, paramExpr);
 
-        var toLowerMethod = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
-        Expression callToLowerMethod = Expression.Call(selectorExpr, toLowerMethod!);
-
-        var selector = Expression.Lambda<Func<T, string>>(callToLowerMethod, paramExpr);
-
-        ((List<SearchExpressionInfo<T>>)specificationBuilder.Specification.SearchCriterias)
-            .Add(new SearchExpressionInfo<T>(selector, searchTerm));
+        specificationBuilder.Where(lambda);
     }
 
     private static void AddSearchEnumPropertyByKeyword<T>(
@@ -160,30 +156,32 @@ public static class SpecificationBuilderExtensions
         }
 
         var enumType = Nullable.GetUnderlyingType(propertyExpr.Type) ?? propertyExpr.Type;
-        var enumValues = Enum.GetValues(enumType);
-
-        var matchingEnums = enumValues.Cast<Enum>()
-            .Where(value => value.GetDescription().Contains(keyword, StringComparison.CurrentCultureIgnoreCase))
+        var matchingEnumValues = Enum.GetValues(enumType)
+            .Cast<Enum>()
+            .Where(e =>
+                e.GetDescription()
+                 .Contains(keyword, StringComparison.CurrentCultureIgnoreCase))
+            .Select(e => Convert.ToInt32(e))
             .ToList();
 
-        if (matchingEnums.Count == 0)
+        if (matchingEnumValues.Count == 0)
         {
             return;
         }
 
-        foreach (var matching in matchingEnums)
-        {
-            string searchTerm = Convert.ToInt32(matching).ToString();
+        // x => matchingEnumValues.Contains((int)x.Property)
+        var convertedProperty = Expression.Convert(propertyExpr, typeof(int));
 
-            var convertedPropertyExpr = Expression.Convert(propertyExpr, typeof(int));
+        var containsMethod = typeof(List<int>)
+            .GetMethod(nameof(List<int>.Contains), new[] { typeof(int) })!;
 
-            Expression callToStringMethod = Expression.Call(convertedPropertyExpr, "ToString", null, null);
+        var valuesExpression = Expression.Constant(matchingEnumValues);
 
-            var selector = Expression.Lambda<Func<T, string>>(callToStringMethod, paramExpr);
+        var body = Expression.Call(valuesExpression, containsMethod, convertedProperty);
 
-            ((List<SearchExpressionInfo<T>>)specificationBuilder.Specification.SearchCriterias)
-                .Add(new SearchExpressionInfo<T>(selector, searchTerm));
-        }
+        var lambda = Expression.Lambda<Func<T, bool>>(body, paramExpr);
+
+        specificationBuilder.Where(lambda);
     }
 
     private static IOrderedSpecificationBuilder<T> AdvancedFilter<T, TFilter>(
@@ -216,8 +214,10 @@ public static class SpecificationBuilderExtensions
                 CreateFilterExpression(filterValid.Field!, filterValid.Operator!, filterValid.Value, parameter);
         }
 
-        ((List<WhereExpressionInfo<T>>)specificationBuilder.Specification.WhereExpressions)
-            .Add(new WhereExpressionInfo<T>(Expression.Lambda<Func<T, bool>>(binaryExpressionFilter, parameter)));
+        var lambda = Expression.Lambda<Func<T, bool>>(
+            binaryExpressionFilter, parameter);
+
+        specificationBuilder.Where(lambda);
 
         return (IOrderedSpecificationBuilder<T>)specificationBuilder;
     }
@@ -485,8 +485,12 @@ public static class SpecificationBuilderExtensions
             return (IOrderedSpecificationBuilder<T>)specificationBuilder;
         }
 
+        IOrderedSpecificationBuilder<T>? ordered = null;
+
         foreach (var field in ParseOrderBy(orderByFields))
         {
+            Expression<Func<T, object?>> keySelector;
+
             if (customOrderBy == null || !customOrderBy.TryGetValue(field.Key, out var orderByFunc))
             {
                 var paramExpr = Expression.Parameter(typeof(T));
@@ -494,53 +498,96 @@ public static class SpecificationBuilderExtensions
                 var propertyExpr = field.Key.Split('.')
                     .Aggregate<string, Expression>(paramExpr, Expression.PropertyOrField);
 
-                var keySelector = Expression.Lambda<Func<T, object?>>(
+                keySelector = Expression.Lambda<Func<T, object?>>(
                     Expression.Convert(propertyExpr, typeof(object)),
                     paramExpr);
-
-                ((List<OrderExpressionInfo<T>>)specificationBuilder.Specification.OrderExpressions)
-                    .Add(new OrderExpressionInfo<T>(keySelector, field.Value));
             }
             else
             {
-                ((List<OrderExpressionInfo<T>>)specificationBuilder.Specification.OrderExpressions)
-                    .Add(new OrderExpressionInfo<T>(orderByFunc, field.Value));
+                keySelector = orderByFunc;
             }
+
+            ordered = field.Value switch
+            {
+                OrderTypeEnum.OrderBy =>
+                    ordered == null
+                        ? specificationBuilder.OrderBy(keySelector)
+                        : ordered.ThenBy(keySelector),
+
+                OrderTypeEnum.OrderByDescending =>
+                    ordered == null
+                        ? specificationBuilder.OrderByDescending(keySelector)
+                        : ordered.ThenByDescending(keySelector),
+
+                OrderTypeEnum.ThenBy =>
+                    ordered!.ThenBy(keySelector),
+
+                OrderTypeEnum.ThenByDescending =>
+                    ordered!.ThenByDescending(keySelector),
+
+                _ => ordered
+            };
         }
 
-        return (IOrderedSpecificationBuilder<T>)specificationBuilder;
+        return ordered ?? (IOrderedSpecificationBuilder<T>)specificationBuilder;
     }
 
     public static ISpecificationBuilder<T> CopyFrom<T>(
         this ISpecificationBuilder<T> specificationBuilder,
         ISpecification<T> specification, CopyFromMode? mode = null)
+        where T : class
     {
         if (mode?.HasFlag(CopyFromMode.OrderExpressions) != false)
         {
-            var orderExpressions = specification.OrderExpressions;
-            ((List<OrderExpressionInfo<T>>)specificationBuilder.Specification.OrderExpressions).AddRange(
-                orderExpressions);
+            IOrderedSpecificationBuilder<T>? ordered = null;
+
+            foreach (var order in specification.OrderExpressions)
+            {
+                ordered = order.OrderType switch
+                {
+                    OrderTypeEnum.OrderBy =>
+                        ordered == null
+                            ? specificationBuilder.OrderBy(order.KeySelector)
+                            : ordered.ThenBy(order.KeySelector),
+
+                    OrderTypeEnum.OrderByDescending =>
+                        ordered == null
+                            ? specificationBuilder.OrderByDescending(order.KeySelector)
+                            : ordered.ThenByDescending(order.KeySelector),
+
+                    OrderTypeEnum.ThenBy =>
+                        ordered!.ThenBy(order.KeySelector),
+
+                    OrderTypeEnum.ThenByDescending =>
+                        ordered!.ThenByDescending(order.KeySelector),
+
+                    _ => ordered
+                };
+            }
         }
 
         if (mode?.HasFlag(CopyFromMode.IncludeExpressions) != false)
         {
-            var includeExpressions = specification.IncludeExpressions;
-            ((List<IncludeExpressionInfo>)specificationBuilder.Specification.IncludeExpressions).AddRange(
-                includeExpressions);
+            foreach (var include in specification.IncludeExpressions)
+            {
+                specificationBuilder.Include((Expression<Func<T, object>>)include.LambdaExpression);
+            }
         }
 
         if (mode?.HasFlag(CopyFromMode.WhereExpressions) != false)
         {
-            var whereExpressions = specification.WhereExpressions;
-            ((List<WhereExpressionInfo<T>>)specificationBuilder.Specification.WhereExpressions).AddRange(
-                whereExpressions);
+            foreach (var where in specification.WhereExpressions)
+            {
+                specificationBuilder.Where(where.Filter);
+            }
         }
 
         if (mode?.HasFlag(CopyFromMode.SearchCriteria) != false)
         {
-            var searchCriteria = specification.SearchCriterias;
-            ((List<SearchExpressionInfo<T>>)specificationBuilder.Specification.SearchCriterias)
-                .AddRange(searchCriteria);
+            foreach (var search in specification.SearchCriterias)
+            {
+                specificationBuilder.Search(search.Selector, search.SearchTerm);
+            }
         }
 
         return specificationBuilder;
