@@ -4,7 +4,6 @@ using Host.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 using Shared.Constants;
-using System.Threading.Tasks;
 
 namespace Host.Controllers.Client;
 
@@ -39,6 +38,14 @@ public class FriendshipRequestController : BaseClientAuthController
     [HttpPost("cancel")]
     [OpenApiOperation("", "")]
     public async Task<IActionResult> CancelFriendRequestAsync(CancelFriendRequestCommand request)
+    {
+        var result = await Mediator.Send(request);
+        return Ok(result, MessageCommon.UpdateSuccess);
+    }
+
+    [HttpPost("reject")]
+    [OpenApiOperation("", "")]
+    public async Task<IActionResult> RejectFriendRequestAsync(RejectFriendRequestCommand request)
     {
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.UpdateSuccess);

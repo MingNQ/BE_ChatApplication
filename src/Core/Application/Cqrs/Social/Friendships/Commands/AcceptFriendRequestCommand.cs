@@ -7,6 +7,7 @@ using Domain.Entities.Chat;
 using Domain.Entities.Social;
 using Mapster;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Shared.Constants;
 
 namespace Application.Cqrs.Social.Friendships.Commands;
@@ -29,26 +30,35 @@ public class AcceptFriendRequestCommandHandler(IUnitOfWork unitOfWork)
             predicate: x => x.Id == request.FriendshipRequestId,
             disableTracking: false) ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(FriendshipRequest), request.FriendshipRequestId));
 
-        var memberRole = await _conversationRoleRepository.GetFirstOrDefaultAsync(
-            predicate: r => r.NormalizedName == AppConsts.MemberConversationRoleName.ToUpperInvariant(),
-            disableTracking: true
-            ) ?? throw new NotFoundException(CustomResponseMessage.RoleDoesNotExist);
-
         friendshipRequest.UpdateStatus(FriendshipEnum.Accepted);
 
         _friendshipRequestRepository.Update(friendshipRequest);
 
-        var conversation = Conversation.Create(ConversationType.Private);
+        var conversation = await _conversationRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Members.All(x => x.UserId == friendshipRequest.UserId && x.UserId == friendshipRequest.FriendId)
+                && x.Type == ConversationType.Private,
+            include: x => x.Include(x => x.Members),
+            disableTracking: false);
 
-        await _conversationRepository.InsertAsync(conversation, cancellationToken);
-        await unitOfWork.SaveChangesAsync();
+        if (conversation == null)
+        {
+            var memberRole = await _conversationRoleRepository.GetFirstOrDefaultAsync(
+                predicate: r => r.NormalizedName == AppConsts.MemberConversationRoleName.ToUpperInvariant(),
+                disableTracking: true
+                ) ?? throw new NotFoundException(CustomResponseMessage.RoleDoesNotExist);
 
-        var user = ConversationMember.Create(conversation.Id, friendshipRequest.UserId, null);
-        user.AssignRole(memberRole.Id);
-        conversation.AddMember(user);
-        var friend = ConversationMember.Create(conversation.Id, friendshipRequest.UserId, null);
-        friend.AssignRole(memberRole.Id);
-        conversation.AddMember(friend);
+            conversation = Conversation.Create(ConversationType.Private);
+
+            await _conversationRepository.InsertAsync(conversation, cancellationToken);
+            await unitOfWork.SaveChangesAsync();
+
+            var user = ConversationMember.Create(conversation.Id, friendshipRequest.UserId, null);
+            user.AssignRole(memberRole.Id);
+            conversation.AddMember(user);
+            var friend = ConversationMember.Create(conversation.Id, friendshipRequest.UserId, null);
+            friend.AssignRole(memberRole.Id);
+            conversation.AddMember(friend);
+        }
 
         await unitOfWork.SaveChangesAsync();
 

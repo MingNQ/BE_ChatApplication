@@ -5,5 +5,6 @@ public enum FriendshipEnum
     Pending,
     Accepted,
     Canceled,
+    Rejected,
     Blocked
 }
