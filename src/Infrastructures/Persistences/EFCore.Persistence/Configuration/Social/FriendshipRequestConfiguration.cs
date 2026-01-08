@@ -12,5 +12,15 @@ public class FriendshipRequestConfiguration : IEntityTypeConfiguration<Friendshi
         builder.ToTable("FriendshipRequests", SchemaNames.Social);
 
         builder.HasKey(x => x.Id);
+
+        builder.HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.Friend)
+            .WithMany()
+            .HasForeignKey(x => x.FriendId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

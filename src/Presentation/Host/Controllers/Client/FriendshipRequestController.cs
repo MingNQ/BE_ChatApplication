@@ -27,26 +27,29 @@ public class FriendshipRequestController : BaseClientAuthController
         return Ok(result, MessageCommon.CreateSuccess);
     }
 
-    [HttpPost("accept")]
+    [HttpPost("{id:long}/accept")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> AcceptFriendRequestAsync(AcceptFriendRequestCommand request)
+    public async Task<IActionResult> AcceptFriendRequestAsync(long id, AcceptFriendRequestCommand request)
     {
+        request.SetId(id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.UpdateSuccess);
     }
 
-    [HttpPost("cancel")]
+    [HttpPost("{id:long}/cancel")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> CancelFriendRequestAsync(CancelFriendRequestCommand request)
+    public async Task<IActionResult> CancelFriendRequestAsync(long id, CancelFriendRequestCommand request)
     {
+        request.SetId(id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.UpdateSuccess);
     }
 
-    [HttpPost("reject")]
+    [HttpPost("{id:long}/reject")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> RejectFriendRequestAsync(RejectFriendRequestCommand request)
+    public async Task<IActionResult> RejectFriendRequestAsync(long id, RejectFriendRequestCommand request)
     {
+        request.SetId(id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.UpdateSuccess);
     }

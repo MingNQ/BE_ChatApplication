@@ -7,12 +7,19 @@ using Domain.Entities.Social;
 using Mapster;
 using MediatR;
 using Shared.Constants;
+using System.Text.Json.Serialization;
 
 namespace Application.Cqrs.Social.Friendships.Commands;
 
 public class CancelFriendRequestCommand : IRequest<FriendshipRequestDto>
 {
-    public long FriendshipRequestId { get; set; }
+    [JsonIgnore]
+    public long FriendshipRequestId { get; private set; }
+
+    public void SetId(long friendshipRequestId)
+    {
+        FriendshipRequestId = friendshipRequestId;
+    }
 }
 
 public class CancelFriendRequestCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<CancelFriendRequestCommand, FriendshipRequestDto>

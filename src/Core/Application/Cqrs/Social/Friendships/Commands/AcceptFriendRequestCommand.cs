@@ -9,12 +9,19 @@ using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Shared.Constants;
+using System.Text.Json.Serialization;
 
 namespace Application.Cqrs.Social.Friendships.Commands;
 
 public class AcceptFriendRequestCommand : IRequest<FriendshipRequestDto>
 {
-    public long FriendshipRequestId { get; set; }
+    [JsonIgnore]
+    public long FriendshipRequestId { get; private set; }
+
+    public void SetId(long friendshipRequestId)
+    {
+        FriendshipRequestId = friendshipRequestId;
+    }
 }
 
 public class AcceptFriendRequestCommandHandler(IUnitOfWork unitOfWork)
