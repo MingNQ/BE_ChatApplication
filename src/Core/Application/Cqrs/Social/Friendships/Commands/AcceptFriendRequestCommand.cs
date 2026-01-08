@@ -35,6 +35,8 @@ public class AcceptFriendRequestCommandHandler(IUnitOfWork unitOfWork)
     {
         var friendshipRequest = await _friendshipRequestRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == request.FriendshipRequestId,
+            include: x => x.Include(x => x.User!)
+                .Include(x => x.Friend!),
             disableTracking: false) ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(FriendshipRequest), request.FriendshipRequestId));
 
         friendshipRequest.UpdateStatus(FriendshipEnum.Accepted);
@@ -42,8 +44,10 @@ public class AcceptFriendRequestCommandHandler(IUnitOfWork unitOfWork)
         _friendshipRequestRepository.Update(friendshipRequest);
 
         var conversation = await _conversationRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Members.All(x => x.UserId == friendshipRequest.UserId && x.UserId == friendshipRequest.FriendId)
-                && x.Type == ConversationType.Private,
+            predicate: x => x.Members.Any(x =>
+                        (x.UserId == friendshipRequest.UserId && x.AddedByUserId == friendshipRequest.FriendId) ||
+                        (x.UserId == friendshipRequest.FriendId && x.AddedByUserId == friendshipRequest.UserId)) &&
+                        x.Type == ConversationType.Private,
             include: x => x.Include(x => x.Members),
             disableTracking: false);
 
@@ -59,10 +63,10 @@ public class AcceptFriendRequestCommandHandler(IUnitOfWork unitOfWork)
             await _conversationRepository.InsertAsync(conversation, cancellationToken);
             await unitOfWork.SaveChangesAsync();
 
-            var user = ConversationMember.Create(conversation.Id, friendshipRequest.UserId, null);
+            var user = ConversationMember.Create(conversation.Id, friendshipRequest.UserId, friendshipRequest.FriendId);
             user.AssignRole(memberRole.Id);
             conversation.AddMember(user);
-            var friend = ConversationMember.Create(conversation.Id, friendshipRequest.UserId, null);
+            var friend = ConversationMember.Create(conversation.Id, friendshipRequest.FriendId, friendshipRequest.UserId);
             friend.AssignRole(memberRole.Id);
             conversation.AddMember(friend);
         }

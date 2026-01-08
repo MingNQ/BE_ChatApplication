@@ -6,6 +6,7 @@ using Domain.Common.Enums;
 using Domain.Entities.Social;
 using Mapster;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Shared.Constants;
 using System.Text.Json.Serialization;
 
@@ -30,6 +31,7 @@ public class CancelFriendRequestCommandHandler(IUnitOfWork unitOfWork) : IReques
     {
         var friendRequest = await _friendshipRequestRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == request.FriendshipRequestId,
+            include: x => x.Include(x => x.User!).Include(x => x.Friend!),
             disableTracking: false) ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(FriendshipRequest), request.FriendshipRequestId));
 
         friendRequest.UpdateStatus(FriendshipEnum.Canceled);

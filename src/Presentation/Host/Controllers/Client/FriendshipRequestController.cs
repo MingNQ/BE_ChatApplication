@@ -19,6 +19,14 @@ public class FriendshipRequestController : BaseClientAuthController
         return Ok(result, MessageCommon.GetDataSuccess);
     }
 
+    [HttpGet("received")]
+    [OpenApiOperation("", "")]
+    public async Task<IActionResult> GetMyFriendshipRequestAsync()
+    {
+        var result = await Mediator.Send(new GetMyFriendshipRequestQuery());
+        return Ok(result, MessageCommon.GetDataSuccess);
+    }
+
     [HttpPost()]
     [OpenApiOperation("", "")]
     public async Task<IActionResult> CreateFriendRequestAsync(AddFriendRequestCommand request)
@@ -29,8 +37,9 @@ public class FriendshipRequestController : BaseClientAuthController
 
     [HttpPost("{id:long}/accept")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> AcceptFriendRequestAsync(long id, AcceptFriendRequestCommand request)
+    public async Task<IActionResult> AcceptFriendRequestAsync(long id)
     {
+        var request = new AcceptFriendRequestCommand();
         request.SetId(id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.UpdateSuccess);
@@ -38,8 +47,9 @@ public class FriendshipRequestController : BaseClientAuthController
 
     [HttpPost("{id:long}/cancel")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> CancelFriendRequestAsync(long id, CancelFriendRequestCommand request)
+    public async Task<IActionResult> CancelFriendRequestAsync(long id)
     {
+        var request = new CancelFriendRequestCommand();
         request.SetId(id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.UpdateSuccess);
@@ -47,8 +57,9 @@ public class FriendshipRequestController : BaseClientAuthController
 
     [HttpPost("{id:long}/reject")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> RejectFriendRequestAsync(long id, RejectFriendRequestCommand request)
+    public async Task<IActionResult> RejectFriendRequestAsync(long id)
     {
+        var request = new RejectFriendRequestCommand();
         request.SetId(id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.UpdateSuccess);
