@@ -11,11 +11,22 @@ namespace Host.Controllers.Client;
 [Tags("Client|Conversation")]
 public class ConversationController : BaseClientAuthController
 {
-    [HttpPost("search")]
+    [HttpGet("")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> GetConversationAsync([FromBody] GetConversationByConditionQuery request)
+    public async Task<IActionResult> GetConversationAsync()
     {
-        var result = await Mediator.Send(request);
+        var result = await Mediator.Send(new GetConversationByUserIdQuery());
+        return Ok(result, MessageCommon.GetDataSuccess);
+    }
+
+    [HttpGet("{id:long}")]
+    [OpenApiOperation("", "")]
+    public async Task<IActionResult> GetConversationByIdAsync(long id)
+    {
+        var result = await Mediator.Send(new GetConversationByIdQuery()
+        {
+            Id = id
+        });
         return Ok(result, MessageCommon.GetDataSuccess);
     }
 

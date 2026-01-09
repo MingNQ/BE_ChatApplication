@@ -10,4 +10,5 @@ public class ConversationDto : IDto
     public ConversationType Type { get; private set; }
     public string? Name { get; set; }
     public List<MessageDto>? Messages { get; set; }
+    public List<ConversationMemberDto>? Members { get; set; }
 }
