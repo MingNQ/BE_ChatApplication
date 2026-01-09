@@ -5,9 +5,9 @@ using Domain.Entities.Chat;
 
 namespace Application.Cqrs.Chat.Conversations.Specs;
 
-public class ConversationByUserIdSpec : Specification<Conversation, ConversationDto>
+public class ConversationByConditionSpec : Specification<Conversation, ConversationDto>
 {
-    public ConversationByUserIdSpec(ConversationSearchParam param)
+    public ConversationByConditionSpec(ConversationSearchParam param)
     {
         Query.Where(conversation => conversation.Members.Any(member => member.UserId == param.UserId));
 

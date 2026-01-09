@@ -25,7 +25,7 @@ public class GetConversationByConditionQueryHandler(
             request.UserId = currentUser.UserId;
         }
 
-        var spec = new ConversationByUserIdSpec(request);
+        var spec = new ConversationByConditionSpec(request);
         var conversations = await paginationService.PaginatedListAsync(
             conversationRepository,
             spec,

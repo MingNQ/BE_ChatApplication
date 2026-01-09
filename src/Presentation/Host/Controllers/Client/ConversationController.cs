@@ -19,6 +19,17 @@ public class ConversationController : BaseClientAuthController
         return Ok(result, MessageCommon.GetDataSuccess);
     }
 
+    [HttpGet("friends/{id:long}")]
+    [OpenApiOperation("", "")]
+    public async Task<IActionResult> GetConversationByFriendAsync(long id)
+    {
+        var result = await Mediator.Send(new GetConversationByFriendIdQuery
+        {
+            FriendId = id
+        });
+        return Ok(result, MessageCommon.GetDataSuccess);
+    }
+
     [HttpPost]
     [OpenApiOperation("", "")]
     public async Task<IActionResult> CreateConversationAsync(CreateConversationCommand request)
