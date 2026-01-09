@@ -11,11 +11,11 @@ namespace Host.Controllers.Client;
 [Tags("Social|Friendship Request")]
 public class FriendshipRequestController : BaseClientAuthController
 {
-    [HttpPost("search")]
+    [HttpGet]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> GetAsync([FromBody] GetFriendshipRequestByConditionQuery request)
+    public async Task<IActionResult> GetAsync()
     {
-        var result = await Mediator.Send(request);
+        var result = await Mediator.Send(new GetMyFriendshipRequestQuery());
         return Ok(result, MessageCommon.GetDataSuccess);
     }
 
@@ -23,7 +23,23 @@ public class FriendshipRequestController : BaseClientAuthController
     [OpenApiOperation("", "")]
     public async Task<IActionResult> GetMyFriendshipRequestAsync()
     {
-        var result = await Mediator.Send(new GetMyFriendshipRequestQuery());
+        var result = await Mediator.Send(new GetMyFriendshipReceivedQuery());
+        return Ok(result, MessageCommon.GetDataSuccess);
+    }
+
+    [HttpGet("related-friends")]
+    [OpenApiOperation("", "")]
+    public async Task<IActionResult> GetRelatedFriendsAsync()
+    {
+        var result = await Mediator.Send(new GetRelatedFriendsQuery());
+        return Ok(result, MessageCommon.GetDataSuccess);
+    }
+
+    [HttpGet("friends")]
+    [OpenApiOperation("", "")]
+    public async Task<IActionResult> GetFriendsAsync()
+    {
+        var result = await Mediator.Send(new GetFriendsQuery());
         return Ok(result, MessageCommon.GetDataSuccess);
     }
 

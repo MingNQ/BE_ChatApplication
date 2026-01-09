@@ -1,14 +1,13 @@
-﻿using Application.Dto.Social;
-using Ardalis.Specification;
+﻿using Ardalis.Specification;
 using Domain.Entities.Social;
 
 namespace Application.Cqrs.Social.Friendships.Specs;
 
-public sealed class MyFriendshipRequestSpec : Specification<FriendshipRequest, FriendshipRequestDto>
+public class MyFriendshipReceivedSpec : Specification<FriendshipRequest>
 {
-    public MyFriendshipRequestSpec(long userId)
+    public MyFriendshipReceivedSpec(long currentUserId)
     {
-        Query.Where(x => x.UserId == userId);
+        Query.Where(x => x.FriendId == currentUserId);
 
         Query.Where(x => x.Status == Domain.Common.Enums.FriendshipEnum.Pending);
 

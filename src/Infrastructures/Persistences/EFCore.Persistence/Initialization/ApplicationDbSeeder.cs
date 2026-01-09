@@ -12,8 +12,8 @@ internal class ApplicationDbSeeder(CustomSeederRunner seederRunner)
     public async Task SeedDatabaseAsync(ApplicationDbContext dbContext, CancellationToken cancellationToken)
     {
         await seederRunner.RunSeedersAsync(cancellationToken);
-        await SeedRolesAsync(dbContext);
-        await SeedUserDataAsync(dbContext);
+        //await SeedRolesAsync(dbContext);
+        //await SeedUserDataAsync(dbContext);
         await SeedConversationRolesAsync(dbContext);
     }
 

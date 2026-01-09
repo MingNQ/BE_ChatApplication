@@ -3,7 +3,6 @@ using Application.Common.Persistence;
 using Application.Cqrs.Social.Friendships.Specs;
 using Application.Dto.Social;
 using Domain.Entities.Social;
-using Mapster;
 using MediatR;
 
 namespace Application.Cqrs.Social.Friendships.Queries;
@@ -18,8 +17,8 @@ public class GetMyFriendshipRequestQueryHandler(
     public async Task<List<FriendshipRequestDto>> Handle(GetMyFriendshipRequestQuery request, CancellationToken cancellationToken)
     {
         var spec = new MyFriendshipRequestSpec(currentUser.UserId);
-        var friendshipRequests = await friendshipRequestRepository.ListAsync(spec, cancellationToken);
+        var friendRequests = await friendshipRequestRepository.ListAsync(spec, cancellationToken);
 
-        return friendshipRequests.Adapt<List<FriendshipRequestDto>>();
+        return friendRequests;
     }
 }
