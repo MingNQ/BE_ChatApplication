@@ -12,6 +12,7 @@ public class MessageSendEventHandler(IHubContext<ChatHub> hub)
     public async Task Handle(EventNotification<MessageSentEvent> @event, CancellationToken cancellationToken)
     {
         var message = @event.Event.Message;
+        var clientTempId = @event.Event.ClientTempId;
 
         await hub
             .Clients
@@ -23,7 +24,8 @@ public class MessageSendEventHandler(IHubContext<ChatHub> hub)
                 message.SenderId,
                 message.SentAt,
                 message.Content,
-                message.Attachments
+                message.Attachments,
+                ClientTempId = clientTempId
             }, cancellationToken: cancellationToken);
     }
 }

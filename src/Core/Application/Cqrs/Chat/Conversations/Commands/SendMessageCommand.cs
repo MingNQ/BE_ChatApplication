@@ -17,6 +17,7 @@ public class SendMessageCommand : IRequest<MessageDto>
     public long ConversationId { get; set; }
     public long SenderId { get; set; }
     public string Content { get; set; } = string.Empty;
+    public string ClientTempId { get; set; } = string.Empty;
     public List<MessageAttachmentDto>? Attachments { get; set; } = [];
 }
 
@@ -33,7 +34,7 @@ public class SendMessageCommandHandler(IUnitOfWork unitOfWork, IEventPublisher e
             disableTracking: false)
             ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Conversation), request.ConversationId));
 
-        var message = conversation.SendMessage(request.SenderId, request.Content);
+        var message = conversation.SendMessage(request.SenderId, request.Content, request.ClientTempId);
 
         if (request.Attachments is not null && request.Attachments.Any())
         {
@@ -46,7 +47,8 @@ public class SendMessageCommandHandler(IUnitOfWork unitOfWork, IEventPublisher e
         _conversationRepository.Update(conversation);
         await unitOfWork.SaveChangesAsync();
 
-        await eventPublisher.PublishAsync(new MessageSentEvent(message));
+        var messageSentEvent = new MessageSentEvent(request.ClientTempId, message);
+        await eventPublisher.PublishAsync(messageSentEvent);
 
         return message.Adapt<MessageDto>();
     }

@@ -59,7 +59,7 @@ public class Conversation : AuditableEntity<long>, IAggregateRoot
         }
     }
 
-    public Message SendMessage(long senderId, string content)
+    public Message SendMessage(long senderId, string content, string clientTempId)
     {
         if (!_members.Any(m => m.UserId == senderId))
         {
@@ -69,7 +69,7 @@ public class Conversation : AuditableEntity<long>, IAggregateRoot
         var message = Message.Create(Id, senderId, content);
         _messages.Add(message);
 
-        DomainEvents.Add(new MessageSentEvent(message));
+        DomainEvents.Add(new MessageSentEvent(clientTempId, message));
 
         return message;
     }
