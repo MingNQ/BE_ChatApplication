@@ -7,18 +7,29 @@ using MediatR;
 
 namespace Application.Cqrs.Chat.Conversations.Queries;
 
-public class GetConversationByUserIdQuery : IRequest<List<ConversationDto>>;
+public class GetConversationByUserIdQuery : IRequest<List<RecentConversationDto>>;
 
 public class GetConversationQueryHandler(
     IReadRepository<Conversation> conversationRepository,
     ICurrentUser currentUser)
-    : IRequestHandler<GetConversationByUserIdQuery, List<ConversationDto>>
+    : IRequestHandler<GetConversationByUserIdQuery, List<RecentConversationDto>>
 {
-    public async Task<List<ConversationDto>> Handle(GetConversationByUserIdQuery request, CancellationToken cancellationToken)
+    public async Task<List<RecentConversationDto>> Handle(GetConversationByUserIdQuery request, CancellationToken cancellationToken)
     {
         var spec = new ConversationByUserIdSpec(currentUser.UserId);
         var conversations = await conversationRepository.ListAsync(spec, cancellationToken);
 
-        return conversations;
+        var result = conversations.Select(c => new RecentConversationDto
+        {
+            Id = c.Id,
+            Type = c.Type,
+            Name = c.Name,
+            LastMessageContent = c.Messages?.LastOrDefault()?.Content,
+            LastMessageSentAt = c.Messages?.LastOrDefault()?.SentAt,
+            UnreadMessagesCount = 0,
+            Members = c.Members
+        }).ToList();
+
+        return result;
     }
 }

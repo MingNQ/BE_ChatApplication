@@ -7,8 +7,19 @@ namespace Application.Dto.Chat.Conversations;
 public class ConversationDto : IDto
 {
     public long Id { get; set; }
-    public ConversationType Type { get; private set; }
+    public ConversationType Type { get; set; }
     public string? Name { get; set; }
     public List<MessageDto>? Messages { get; set; }
+    public List<ConversationMemberDto>? Members { get; set; }
+}
+
+public class RecentConversationDto : IDto
+{
+    public long Id { get; set; }
+    public ConversationType Type { get; set; }
+    public string? Name { get; set; }
+    public string? LastMessageContent { get; set; }
+    public DateTimeOffset? LastMessageSentAt { get; set; }
+    public int UnreadMessagesCount { get; set; }
     public List<ConversationMemberDto>? Members { get; set; }
 }
