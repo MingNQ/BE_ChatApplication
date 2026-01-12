@@ -36,7 +36,7 @@ public class SendMessageCommandHandler(IUnitOfWork unitOfWork, IEventPublisher e
 
         var message = conversation.SendMessage(request.SenderId, request.Content, request.ClientTempId);
 
-        if (request.Attachments is not null && request.Attachments.Any())
+        if (request.Attachments is not null && request.Attachments.Count != 0)
         {
             foreach (var attachment in request.Attachments)
             {

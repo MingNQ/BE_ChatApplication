@@ -28,7 +28,8 @@ public class GetConversationQueryHandler(
             LastMessageSentAt = c.Messages?.LastOrDefault()?.SentAt,
             UnreadMessagesCount = 0,
             Members = c.Members
-        }).ToList();
+        }).OrderByDescending(x => x.LastMessageSentAt)
+        .ToList();
 
         return result;
     }
