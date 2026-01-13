@@ -1,0 +1,33 @@
+services:
+  host:
+    build:
+      context: .
+      dockerfile: src\Presentation\Host\Dockerfile
+    container_name: chat_api
+    ports:
+      - "5000:8080"
+    depends_on:
+      - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DatabaseSettings__DBProvider: mssql
+      DatabaseSettings__ConnectionString: >
+        Server=db;
+        Database=ChatApplication;
+        User Id=sa;
+        Password=Strong@123;
+        TrustServerCertificate=True;
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: chat_db
+    environment:
+      SA_PASSWORD: "Strong@123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+
+volumes:
+  sql_data:

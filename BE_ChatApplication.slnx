@@ -25,4 +25,7 @@
     <Project Path="src/Presentation/Host/Host.csproj" />
   </Folder>
   <Folder Name="/src/test/" />
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>
