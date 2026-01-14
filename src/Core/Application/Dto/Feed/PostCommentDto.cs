@@ -9,6 +9,6 @@ public class PostCommentDto : IDto
     public long UserId { get; set; }
     public long? RootId { get; set; }
     public string Content { get; set; } = string.Empty;
-    public DateTimeOffset CreatedAt { get; set; }
-    public DateTimeOffset UpdatedAt { get; set; }
+    public DateTimeOffset CreatedOn { get; set; }
+    public DateTimeOffset UpdatedOn { get; set; }
 }

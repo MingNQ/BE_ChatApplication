@@ -75,4 +75,16 @@ public class Post : AuditableEntity<long>, IAggregateRoot
             _attachments.Remove(attachment);
         }
     }
+
+    public void UpdateAttachments(List<PostAttachment> attachments)
+    {
+        foreach (var attachment in attachments.Where(a => a.Id == 0))
+        {
+            AddAttachment(attachment);
+        }
+        var incomingAttachmentIds = attachments.Where(a => a.Id != 0).Select(a => a.Id).ToHashSet();
+        var toRemove = _attachments.Where(a => !incomingAttachmentIds.Contains(a.Id)).ToList();
+
+        RemoveAttachments(toRemove);
+    }
 }
