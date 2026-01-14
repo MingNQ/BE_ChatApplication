@@ -12,12 +12,6 @@ public class DeleteReactionCommand : IRequest<bool>
 {
     public long Id { get; set; }
     public long PostId { get; set; }
-
-    public DeleteReactionCommand(long id, long postId)
-    {
-        Id = id;
-        PostId = postId;
-    }
 }
 
 public class DeleteReactionCommandHandler(IUnitOfWork unitOfWork)

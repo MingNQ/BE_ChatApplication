@@ -7,7 +7,7 @@ public class CommentCommandValidatorBase<T> : AbstractValidator<T> where T : Bas
 {
     public CommentCommandValidatorBase()
     {
-        RuleFor(x => x.Id)
+        RuleFor(x => x.PostId)
             .NotEmpty()
             .WithMessage("This field is required");
 

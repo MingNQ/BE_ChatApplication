@@ -25,11 +25,11 @@ public class CreateCommentCommandHandler(
 
     public async Task<PostDto> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
     {
-        var postComment = PostComment.Create(request.Id, currentUser.UserId, request.Content, request.RootId);
+        var postComment = PostComment.Create(request.PostId, currentUser.UserId, request.Content, request.RootId);
         var post = await _postRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Id == request.Id,
+            predicate: x => x.Id == request.PostId,
             include: x => x.Include(p => p.Comments),
-            disableTracking: false) ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Post), request.Id));
+            disableTracking: false) ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Post), request.PostId));
 
         post.AddComment(postComment);
 

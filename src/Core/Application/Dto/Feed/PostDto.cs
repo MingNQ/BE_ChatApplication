@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Dto.Persistence.Catalog.User;
 using Domain.Common.Enums;
 
 namespace Application.Dto.Feed;
@@ -11,6 +12,7 @@ public class PostDto : IDto
     public PostVisibilityEnum Visibility { get; set; }
     public DateTimeOffset CreatedOn { get; set; }
     public DateTimeOffset UpdatedOn { get; set; }
+    public SortUserInfo? Author { get; set; }
     public List<PostAttachmentDto> Attachments { get; set; } = [];
     public List<PostReactionDto> Reactions { get; set; } = [];
     public List<PostCommentDto> Comments { get; set; } = [];

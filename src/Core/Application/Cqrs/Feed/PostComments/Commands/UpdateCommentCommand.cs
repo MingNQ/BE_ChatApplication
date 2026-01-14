@@ -23,9 +23,9 @@ public class UpdateCommentCommandHandler(IUnitOfWork unitOfWork)
     public async Task<PostDto> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
     {
         var post = await _postRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Id == request.Id,
+            predicate: x => x.Id == request.PostId,
             include: x => x.Include(p => p.Comments),
-            disableTracking: false) ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Post), request.Id));
+            disableTracking: false) ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Post), request.PostId));
 
         var postComment = post.Comments.Where(x => x.Id == request.CommentId);
 

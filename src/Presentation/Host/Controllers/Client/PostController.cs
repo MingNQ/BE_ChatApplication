@@ -78,54 +78,50 @@ public class PostController : BaseClientAuthController
         return Ok(result, MessageCommon.UpdateSuccess);
     }
 
-    [HttpPost("{id:long}/comment")]
+    [HttpPost("comment")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> CreateCommentAsync(long id, CreateCommentCommand request)
+    public async Task<IActionResult> CreateCommentAsync(CreateCommentCommand request)
     {
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.CreateSuccess);
     }
 
-    [HttpPut("{id:long}/comment/{commentId:long}")]
+    [HttpPut("comment")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> UpdateCommentAsync(long id, long commentId, UpdateCommentCommand request)
+    public async Task<IActionResult> UpdateCommentAsync(UpdateCommentCommand request)
     {
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.UpdateSuccess);
     }
 
-    [HttpDelete("{id:long}/comment/{commentId:long}")]
+    [HttpDelete("comment")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> DeleteCommentAsync(long id, long commentId)
+    public async Task<IActionResult> DeleteCommentAsync(DeleteCommentCommand request)
     {
-        var request = new DeleteCommentCommand();
-        request.SetId(id, commentId);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.DeleteSuccess);
     }
 
-    [HttpPost("{id:long}/reaction")]
+    [HttpPost("reaction")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> CreateReactionAsync(long id, CreateReactionCommand request)
+    public async Task<IActionResult> CreateReactionAsync(CreateReactionCommand request)
     {
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.CreateSuccess);
     }
 
-    
-    [HttpPut("{id:long}/reaction/{reactionId:long}")]
+    [HttpPut("reaction")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> UpdateReactionAsync(long id, long reactionId, UpdateReactionCommand request)
+    public async Task<IActionResult> UpdateReactionAsync(UpdateReactionCommand request)
     {
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.UpdateSuccess);
     }
 
-    [HttpDelete("{id:long}/reaction/{reactionId:long}")]
+    [HttpDelete("reaction")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> DeleteReactionAsync(long id, long reactionId)
+    public async Task<IActionResult> DeleteReactionAsync(DeleteReactionCommand request)
     {
-        var request = new DeleteReactionCommand(reactionId, id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.DeleteSuccess);
     }
