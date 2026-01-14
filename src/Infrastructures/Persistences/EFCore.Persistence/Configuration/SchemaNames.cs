@@ -25,4 +25,7 @@ internal static class SchemaNames
 
     // Friendship and follow
     public const string Social = nameof(Social);
+
+    // User-generated content: posts, comments, likes
+    public const string Feed = nameof(Feed);
 }

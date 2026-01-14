@@ -2,6 +2,7 @@ using Application.Common.Events;
 using Application.Common.Interfaces;
 using Domain.Entities.Catalog;
 using Domain.Entities.Chat;
+using Domain.Entities.Feed;
 using Domain.Entities.Identity;
 using Domain.Entities.Social;
 using Microsoft.EntityFrameworkCore;
@@ -53,6 +54,15 @@ public class ApplicationDbContext(
     public DbSet<Follow> Follows => Set<Follow>();
 
     #endregion Social
+
+    #region Feed
+
+    public DbSet<Post> Posts => Set<Post>();
+    public DbSet<PostAttachment> PostAttachments => Set<PostAttachment>();
+    public DbSet<PostComment> PostComments => Set<PostComment>();
+    public DbSet<PostReaction> PostReactions => Set<PostReaction>();
+
+    #endregion Feed
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
 
