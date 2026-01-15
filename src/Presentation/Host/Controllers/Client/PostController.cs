@@ -1,5 +1,6 @@
 ﻿using Application.Cqrs.Feed.PostComments.Commands;
 using Application.Cqrs.Feed.PostReactions.Commands;
+using Application.Cqrs.Feed.PostReactions.Queries;
 using Application.Cqrs.Feed.Posts.Commands;
 using Application.Cqrs.Feed.Posts.Queries;
 using Host.Controllers.Base;
@@ -102,6 +103,16 @@ public class PostController : BaseClientAuthController
         return Ok(result, MessageCommon.DeleteSuccess);
     }
 
+    [HttpGet("{id:long}/reaction/me")]
+    public async Task<IActionResult> GetMyReactionByPostId(long id)
+    {
+        var result = await Mediator.Send(new GetMyReactionByPostIdQuery
+        {
+            Id = id
+        });
+        return Ok(result, MessageCommon.GetDataSuccess);
+    }
+
     [HttpPost("reaction")]
     [OpenApiOperation("", "")]
     public async Task<IActionResult> CreateReactionAsync(CreateReactionCommand request)
@@ -110,18 +121,20 @@ public class PostController : BaseClientAuthController
         return Ok(result, MessageCommon.CreateSuccess);
     }
 
-    [HttpPut("reaction")]
+    [HttpPut("reaction/{id:long}")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> UpdateReactionAsync(UpdateReactionCommand request)
+    public async Task<IActionResult> UpdateReactionAsync(long id, UpdateReactionCommand request)
     {
+        request.SetId(id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.UpdateSuccess);
     }
 
-    [HttpDelete("reaction")]
+    [HttpDelete("reaction/{id:long}")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> DeleteReactionAsync(DeleteReactionCommand request)
+    public async Task<IActionResult> DeleteReactionAsync(long id, DeleteReactionCommand request)
     {
+        request.SetId(id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.DeleteSuccess);
     }

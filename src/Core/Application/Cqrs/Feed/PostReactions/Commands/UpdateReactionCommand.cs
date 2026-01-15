@@ -7,12 +7,19 @@ using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Shared.Constants;
+using System.Text.Json.Serialization;
 
 namespace Application.Cqrs.Feed.PostReactions.Commands;
 
 public class UpdateReactionCommand : BaseReactionCommand, IRequest<PostDto>
 {
-    public long Id { get; set; }
+    [JsonIgnore]
+    public long Id { get; private set; }
+
+    public void SetId(long id)
+    {
+        Id = id;
+    }
 }
 
 public class UpdateReactionCommandHandler(IUnitOfWork unitOfWork)
@@ -24,13 +31,13 @@ public class UpdateReactionCommandHandler(IUnitOfWork unitOfWork)
     {
         var post = await _postRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == request.PostId,
-            include: x => x.Include(p => p.Reactions),
+            include: x => x.Include(p => p.Reactions).Include(p => p.Comments).Include(p => p.Author!),
             disableTracking: false)
             ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Post), request.PostId));
 
         foreach (var reaction in post.Reactions)
         {
-            if (reaction.Id == request.PostId)
+            if (reaction.Id == request.Id)
             {
                 reaction.Update(request.Type);
             }

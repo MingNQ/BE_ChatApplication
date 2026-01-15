@@ -2,7 +2,7 @@
 
 public enum NotificationActivityEnum
 {
-    Reaction,
-    Message,
-    System
+    Reaction = 1,
+    Message = 2,
+    System = 3
 }

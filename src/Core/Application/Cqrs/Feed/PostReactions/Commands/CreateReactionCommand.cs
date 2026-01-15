@@ -24,7 +24,7 @@ public class CreateReactionCommandHandler(
     {
         var post = await _postRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == request.PostId,
-            include: x => x.Include(p => p.Reactions),
+            include: x => x.Include(p => p.Reactions).Include(p => p.Comments).Include(p => p.Author!),
             disableTracking: false)
             ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Post), request.PostId));
         var postReaction = PostReaction.Create(post.Id, currentUser.UserId, request.Type);
