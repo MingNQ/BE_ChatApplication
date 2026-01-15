@@ -5,13 +5,21 @@ using Domain.Entities.Feed;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Shared.Constants;
+using System.Text.Json.Serialization;
 
 namespace Application.Cqrs.Feed.PostComments.Commands;
 
 public class DeleteCommentCommand : IRequest<bool>
 {
     public long PostId { get; set; }
-    public long CommentId { get; set; }
+
+    [JsonIgnore]
+    public long CommentId { get; private set; }
+
+    public void SetId(long id)
+    {
+        CommentId = id;
+    }
 }
 
 public class DeleteCommentCommandHandler(IUnitOfWork unitOfWork)

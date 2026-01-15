@@ -7,12 +7,19 @@ using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Shared.Constants;
+using System.Text.Json.Serialization;
 
 namespace Application.Cqrs.Feed.PostComments.Commands;
 
 public class UpdateCommentCommand : BaseCommentCommand, IRequest<PostDto>
 {
-    public long CommentId { get; set; }
+    [JsonIgnore]
+    public long CommentId { get; private set; }
+
+    public void SetId(long id)
+    {
+        CommentId = id;
+    }
 }
 
 public class UpdateCommentCommandHandler(IUnitOfWork unitOfWork)
@@ -24,7 +31,9 @@ public class UpdateCommentCommandHandler(IUnitOfWork unitOfWork)
     {
         var post = await _postRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == request.PostId,
-            include: x => x.Include(p => p.Comments),
+            include: x => x.Include(p => p.Comments).ThenInclude(c => c.User)
+                .Include(p => p.Reactions)
+                .Include(p => p.Author!),
             disableTracking: false) ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Post), request.PostId));
 
         var postComment = post.Comments.Where(x => x.Id == request.CommentId);

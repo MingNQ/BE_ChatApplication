@@ -87,18 +87,20 @@ public class PostController : BaseClientAuthController
         return Ok(result, MessageCommon.CreateSuccess);
     }
 
-    [HttpPut("comment")]
+    [HttpPut("comment/{id:long}")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> UpdateCommentAsync(UpdateCommentCommand request)
+    public async Task<IActionResult> UpdateCommentAsync(long id, UpdateCommentCommand request)
     {
+        request.SetId(id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.UpdateSuccess);
     }
 
-    [HttpDelete("comment")]
+    [HttpDelete("comment/{id:long}")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> DeleteCommentAsync(DeleteCommentCommand request)
+    public async Task<IActionResult> DeleteCommentAsync(long id, DeleteCommentCommand request)
     {
+        request.SetId(id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.DeleteSuccess);
     }

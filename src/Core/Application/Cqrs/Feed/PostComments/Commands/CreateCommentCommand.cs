@@ -28,7 +28,9 @@ public class CreateCommentCommandHandler(
         var postComment = PostComment.Create(request.PostId, currentUser.UserId, request.Content, request.RootId);
         var post = await _postRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == request.PostId,
-            include: x => x.Include(p => p.Comments),
+            include: x => x.Include(p => p.Comments).ThenInclude(c => c.User)
+                    .Include(p => p.Reactions)
+                    .Include(p => p.Author!),
             disableTracking: false) ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Post), request.PostId));
 
         post.AddComment(postComment);

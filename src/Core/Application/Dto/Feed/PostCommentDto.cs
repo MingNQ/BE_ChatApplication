@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Dto.Persistence.Catalog.User;
 
 namespace Application.Dto.Feed;
 
@@ -11,4 +12,5 @@ public class PostCommentDto : IDto
     public string Content { get; set; } = string.Empty;
     public DateTimeOffset CreatedOn { get; set; }
     public DateTimeOffset UpdatedOn { get; set; }
+    public SortUserInfo? User { get; set; }
 }
