@@ -96,11 +96,12 @@ public class PostController : BaseClientAuthController
         return Ok(result, MessageCommon.UpdateSuccess);
     }
 
-    [HttpDelete("comment/{id:long}")]
+    [HttpDelete("{postId:long}/comment/{id:long}")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> DeleteCommentAsync(long id, DeleteCommentCommand request)
+    public async Task<IActionResult> DeleteCommentAsync(long postId, long id)
     {
-        request.SetId(id);
+        var request = new DeleteCommentCommand();
+        request.SetId(postId, id);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.DeleteSuccess);
     }
