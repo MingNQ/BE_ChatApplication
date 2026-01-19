@@ -36,7 +36,13 @@ public class UpdateCommentCommandHandler(IUnitOfWork unitOfWork)
                 .Include(p => p.Author!),
             disableTracking: false) ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Post), request.PostId));
 
-        var postComment = post.Comments.Where(x => x.Id == request.CommentId);
+        foreach (var comment in post.Comments)
+        {
+            if (comment.Id == request.CommentId)
+            {
+                comment.Update(request.Content);
+            }
+        }
 
         _postRepository.Update(post);
         await unitOfWork.SaveChangesAsync();
