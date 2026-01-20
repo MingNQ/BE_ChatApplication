@@ -60,11 +60,13 @@ public class ConversationController : BaseClientAuthController
 
     [HttpGet("{conversationId:long}/messages")]
     [OpenApiOperation("", "")]
-    public async Task<IActionResult> GetMessagesAsync(long conversationId)
+    public async Task<IActionResult> GetMessagesByConditionAsync(long conversationId, [FromQuery] DateTimeOffset? cursor, [FromQuery] int limit = 20)
     {
-        var result = await Mediator.Send(new GetMessagesByConversationIdQuery
+        var result = await Mediator.Send(new GetMessagesByConditionQuery
         {
-            ConversationId = conversationId
+            ConversationId = conversationId,
+            Cursor = cursor,
+            Limit = limit
         });
 
         return Ok(result, MessageCommon.GetDataSuccess);

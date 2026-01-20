@@ -1,5 +1,7 @@
 ﻿using Application.Common.Repositories;
 using Application.Common.UnitOfWork;
+using Application.Interfaces.Infrastructures.Repositories;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -109,6 +111,8 @@ public static class UnitOfWorkServiceCollectionExtensions
     /// <returns>The same service collection so that multiple calls can be chained.</returns>
     public static IServiceCollection AddCustomRepository(this IServiceCollection services)
     {
+        services.AddScoped<IMessageReadRepository, MessageReadRepository>();
+
         return services;
     }
 }
