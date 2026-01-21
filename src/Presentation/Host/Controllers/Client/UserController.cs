@@ -25,4 +25,26 @@ public class UserController : BaseClientAuthController
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.GetDataSuccess);
     }
+
+    [HttpGet("{id:long}")]
+    [OpenApiOperation("", "")]
+    public async Task<IActionResult> GetUserByIdAsync(long id)
+    {
+        var result = await Mediator.Send(new GetUserExternalByIdQuery
+        {
+            Id = id
+        });
+        return Ok(result, MessageCommon.GetDataSuccess);
+    }
+
+    [HttpGet("{id:long}/friends")]
+    [OpenApiOperation("", "")]
+    public async Task<IActionResult> GetFriendByUserIdAsync(long id)
+    {
+        var result = await Mediator.Send(new GetFriendByUserIdQuery
+        {
+            Id = id
+        });
+        return Ok(result, MessageCommon.GetDataSuccess);
+    }
 }

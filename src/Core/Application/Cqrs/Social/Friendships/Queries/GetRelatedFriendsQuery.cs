@@ -21,9 +21,12 @@ public class GetRelatedFriendsQueryHandler(
     {
         var users = await userRepository.ListAsync(cancellationToken);
         var spec = new RelatedFriendsSpec(currentUser.UserId);
-        var friendRequest = await friendshipRequestRepository.ListAsync(spec, cancellationToken);
+        var friendshipRequests = await friendshipRequestRepository.ListAsync(spec, cancellationToken);
 
-        var relatedFriends = users.Where(x => friendRequest.All(f => f.FriendId != x.Id && f.UserId != x.Id) && x.Id != currentUser.UserId).ToList();
+        var relatedFriends = users.Where(x =>
+            friendshipRequests.All(f => f.FriendId != x.Id && f.UserId != x.Id) &&
+            x.Id != currentUser.UserId)
+            .ToList();
 
         return relatedFriends.Adapt<List<SortUserInfo>>();
     }

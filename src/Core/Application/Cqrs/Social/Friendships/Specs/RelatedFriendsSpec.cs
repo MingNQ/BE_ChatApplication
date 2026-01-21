@@ -8,8 +8,8 @@ public class RelatedFriendsSpec : Specification<FriendshipRequest>
 {
     public RelatedFriendsSpec(long userId)
     {
-        Query.Where(x => x.UserId == userId || x.FriendId == userId);
-
-        Query.Where(x => x.Status != FriendshipEnum.Canceled && x.Status != FriendshipEnum.Rejected);
+        Query.Where(f =>
+            (f.UserId == userId || f.FriendId == userId) &&
+            (f.Status == FriendshipEnum.Accepted || f.Status == FriendshipEnum.Pending));
     }
 }
