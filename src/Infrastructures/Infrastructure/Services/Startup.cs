@@ -6,6 +6,7 @@ using Application.Interfaces.Services;
 using External.Service.Email;
 using Infrastructure.Auth.Authorization;
 using Infrastructure.Services.Cache;
+using Infrastructure.Services.Feed;
 using Infrastructure.Services.Identity;
 using Infrastructure.Services.Integrates;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +30,8 @@ internal static class Startup
         services.AddTransient<IFilePathService, FilePathService>();
         services.AddTransient<IWebSettingService, WebSettingService>();
         services.AddTransient<IFileStorageService, FileStorageService>();
+
+        services.AddTransient<IPostService, PostService>();
 
         return services;
     }

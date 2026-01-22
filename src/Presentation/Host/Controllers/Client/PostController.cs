@@ -52,6 +52,14 @@ public class PostController : BaseClientAuthController
         return Ok(result, MessageCommon.GetDataSuccess);
     }
 
+    [HttpGet("feed")]
+    [OpenApiOperation("", "")]
+    public async Task<IActionResult> GetRelevantPostAsync()
+    {
+        var result = await Mediator.Send(new GetRelevantPostQuery());
+        return Ok(result, MessageCommon.GetDataSuccess);
+    }
+
     [HttpPost("")]
     [OpenApiOperation("", "")]
     public async Task<IActionResult> CreatePostAsync(CreatePostCommand request)
