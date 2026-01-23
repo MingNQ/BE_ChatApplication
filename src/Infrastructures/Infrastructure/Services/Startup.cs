@@ -9,6 +9,7 @@ using Infrastructure.Services.Cache;
 using Infrastructure.Services.Feed;
 using Infrastructure.Services.Identity;
 using Infrastructure.Services.Integrates;
+using Infrastructure.Services.Social;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Services;
@@ -32,6 +33,9 @@ internal static class Startup
         services.AddTransient<IFileStorageService, FileStorageService>();
 
         services.AddTransient<IPostService, PostService>();
+
+        services.AddSingleton<IPresenceService, InMemoryPresenceService>();
+        services.AddHostedService<PresenceCleanupJob>();
 
         return services;
     }

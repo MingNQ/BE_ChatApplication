@@ -1,31 +1,56 @@
 ﻿using Application.Common.Events;
+using Application.Interfaces.Services;
+using Domain.Common.Enums;
 using Domain.Events;
 using Infrastructure.Services.Chat;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Application.Cqrs.Chat.Conversations.Events;
+namespace Infrastructure.Events;
 
-public class MessageSendEventHandler(IHubContext<ChatHub> hub)
+public class MessageSendEventHandler(
+    IHubContext<ChatHub> hub,
+    IPresenceService presenceService)
     : INotificationHandler<EventNotification<MessageSentEvent>>
 {
     public async Task Handle(EventNotification<MessageSentEvent> @event, CancellationToken cancellationToken)
     {
         var message = @event.Event.Message;
         var clientTempId = @event.Event.ClientTempId;
+        var conversation = message.Conversation;
 
-        await hub
-            .Clients
-            .Group(message.ConversationId.ToString())
-            .SendAsync("MessageReceived", new
+        var receiverIds = conversation?.Members
+            .Where(m => m.UserId != message.SenderId)
+            .Select(m => m.UserId)
+            .ToList();
+
+        foreach (var receiverId in receiverIds!)
+        {
+            await hub
+                .Clients
+                .Group(message.ConversationId.ToString())
+                .SendAsync("MessageReceived", new
+                {
+                    message.Id,
+                    message.ConversationId,
+                    message.SenderId,
+                    message.SentAt,
+                    message.Content,
+                    message.Attachments,
+                    ClientTempId = clientTempId
+                }, cancellationToken: cancellationToken);
+
+            var presence = await presenceService.GetPresenceAsync(receiverId);
+
+            if (presence.Status == UserPresenceStatusEnum.Online)
             {
-                message.Id,
-                message.ConversationId,
-                message.SenderId,
-                message.SentAt,
-                message.Content,
-                message.Attachments,
-                ClientTempId = clientTempId
-            }, cancellationToken: cancellationToken);
+                await hub.Clients
+                    .User(receiverId.ToString())
+                    .SendAsync("MessageDelivered", new
+                    {
+                        MessageId = message.Id
+                    }, cancellationToken);
+            }
+        }
     }
 }

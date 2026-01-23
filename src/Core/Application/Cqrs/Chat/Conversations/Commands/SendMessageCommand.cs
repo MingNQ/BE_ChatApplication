@@ -21,7 +21,9 @@ public class SendMessageCommand : IRequest<MessageDto>
     public List<MessageAttachmentDto>? Attachments { get; set; } = [];
 }
 
-public class SendMessageCommandHandler(IUnitOfWork unitOfWork, IEventPublisher eventPublisher)
+public class SendMessageCommandHandler(
+    IUnitOfWork unitOfWork,
+    IEventPublisher eventPublisher)
     : IRequestHandler<SendMessageCommand, MessageDto>
 {
     private readonly IWriteRepository<Conversation> _conversationRepository = unitOfWork.GetRepository<Conversation>();
@@ -36,7 +38,7 @@ public class SendMessageCommandHandler(IUnitOfWork unitOfWork, IEventPublisher e
 
         var message = conversation.SendMessage(request.SenderId, request.Content, request.ClientTempId);
 
-        if (request.Attachments is not null && request.Attachments.Count != 0)
+        if (request.Attachments is { Count: > 0 })
         {
             foreach (var attachment in request.Attachments)
             {

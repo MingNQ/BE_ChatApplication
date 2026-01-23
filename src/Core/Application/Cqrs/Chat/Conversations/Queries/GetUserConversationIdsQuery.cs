@@ -16,7 +16,7 @@ public class GetUserConversastionIdsQueryHandler(IReadRepository<Conversation> c
     public async Task<List<long>> Handle(GetUserConversationIdsQuery request, CancellationToken cancellationToken)
     {
         var spec = new UserConversationIdsSpec(request.UserId);
-        var conversations = await conversationRepository.ListAsync(spec);
+        var conversations = await conversationRepository.ListAsync(spec, cancellationToken);
 
         return conversations.Select(x => x.Id).ToList();
     }

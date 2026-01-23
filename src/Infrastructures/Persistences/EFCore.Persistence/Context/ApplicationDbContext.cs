@@ -51,6 +51,7 @@ public class ApplicationDbContext(
     #region Social
 
     public DbSet<FriendshipRequest> FriendshipRequests => Set<FriendshipRequest>();
+    public DbSet<UserPresenceSnapshot> UserPresenceSnapshots => Set<UserPresenceSnapshot>();
     public DbSet<Follow> Follows => Set<Follow>();
 
     #endregion Social
