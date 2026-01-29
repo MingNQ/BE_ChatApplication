@@ -31,7 +31,12 @@ public class DeleteReactionCommandHandler(IUnitOfWork unitOfWork)
     {
         var post = await _postRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == request.PostId,
-            include: x => x.Include(p => p.Reactions),
+            include: x => x.Include(p => p.Comments)
+                        .ThenInclude(c => c.User)
+                    .Include(p => p.Reactions)
+                    .Include(p => p.Author!)
+                    .Include(p => p.Attachments)
+                        .ThenInclude(a => a.Attachment!),
             disableTracking: false)
             ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Post), request.PostId));
 

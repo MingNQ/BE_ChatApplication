@@ -7,7 +7,7 @@ public class PostsSpec : Specification<Post>
 {
     public PostsSpec()
     {
-        Query.Include(x => x.Attachments);
+        Query.Include(x => x.Attachments).ThenInclude(x => x.Attachment);
         Query.Include(x => x.Reactions);
         Query.Include(x => x.Comments);
 

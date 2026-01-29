@@ -23,7 +23,8 @@ public class GetRelevantPostQueryHandler(
         {
             if (postDto.Attachments.Count != 0)
             {
-                filePathService.BindFullPaths(postDto.Attachments);
+                var attachments = postDto.Attachments.Select(a => a.Attachment!).ToList();
+                filePathService.BindFullPaths(attachments);
             }
         }
 

@@ -26,7 +26,8 @@ public class GetPostByUserIdQueryHandler(
         {
             if (post.Attachments.Count != 0)
             {
-                filePathService.BindFullPaths(post.Attachments);
+                var attachments = post.Attachments.Select(a => a.Attachment!).ToList();
+                filePathService.BindFullPaths(attachments);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Repositories;
+using Application.Common.Services;
 using Application.Common.UnitOfWork;
 using Application.Dto.Feed;
 using Domain.Entities.Feed;
@@ -22,7 +23,9 @@ public class UpdateReactionCommand : BaseReactionCommand, IRequest<PostDto>
     }
 }
 
-public class UpdateReactionCommandHandler(IUnitOfWork unitOfWork)
+public class UpdateReactionCommandHandler(
+    IUnitOfWork unitOfWork,
+    IFilePathService filePathService)
     : IRequestHandler<UpdateReactionCommand, PostDto>
 {
     private readonly IWriteRepository<Post> _postRepository = unitOfWork.GetRepository<Post>();
@@ -31,7 +34,12 @@ public class UpdateReactionCommandHandler(IUnitOfWork unitOfWork)
     {
         var post = await _postRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == request.PostId,
-            include: x => x.Include(p => p.Reactions).Include(p => p.Comments).Include(p => p.Author!),
+            include: x => x.Include(p => p.Comments)
+                        .ThenInclude(c => c.User)
+                    .Include(p => p.Reactions)
+                    .Include(p => p.Author!)
+                    .Include(p => p.Attachments)
+                        .ThenInclude(a => a.Attachment!),
             disableTracking: false)
             ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Post), request.PostId));
 
@@ -45,7 +53,13 @@ public class UpdateReactionCommandHandler(IUnitOfWork unitOfWork)
 
         _postRepository.Update(post);
         await unitOfWork.SaveChangesAsync();
+        var postDto = post.Adapt<PostDto>();
 
-        return post.Adapt<PostDto>();
+        if (postDto.Attachments.Count > 0)
+        {
+            var attachments = postDto.Attachments.Select(a => a.Attachment!).ToList();
+            filePathService.BindFullPaths(attachments);
+        }
+        return postDto;
     }
 }

@@ -10,10 +10,11 @@ public class PostByUserIdSpec : Specification<Post, PostDto>
     {
         Query.Where(x => x.AuthorId == userId);
 
-        Query.Include(x => x.Attachments);
+        Query.Include(x => x.Attachments)
+            .ThenInclude(a => a.Attachment);
         Query.Include(x => x.Reactions);
         Query.Include(x => x.Comments);
 
-        Query.OrderBy(x => x.CreatedOn);
+        Query.OrderByDescending(x => x.CreatedOn);
     }
 }

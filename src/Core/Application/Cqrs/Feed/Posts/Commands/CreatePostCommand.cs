@@ -36,6 +36,7 @@ public class CreatePostCommandHandler(
 
         post.AddAttachments(postAttachments);
 
+        _postRepository.Update(post);
         await unitOfWork.SaveChangesAsync();
 
         return post.Adapt<PostDto>();
