@@ -1,8 +1,8 @@
-using System.ComponentModel.DataAnnotations;
 using Domain.Common.Contracts;
 using Domain.Common.Enums;
+using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Entities.Catalog;
+namespace Domain.Entities.Common;
 
 public class FileStorage : AuditableEntity<long>, IAggregateRoot
 {
@@ -23,16 +23,10 @@ public class FileStorage : AuditableEntity<long>, IAggregateRoot
     [MaxLength(255)]
     public string? Extension { get; set; }
 
-    [MaxLength(255)]
-    public string? Module { get; set; }
-
-    [MaxLength(255)]
-    public string? DocumentType { get; set; }
-
     public FileStorageStatus Status { get; set; }
 
     public static FileStorage Create(string? fileName, string? fileUniqueName, decimal? size,
-        string? type, string? path, string? extension, string? module, string? documentType)
+        string? type, string? path, string? extension)
     {
         return new FileStorage
         {
@@ -42,14 +36,12 @@ public class FileStorage : AuditableEntity<long>, IAggregateRoot
             Type = type,
             Path = path,
             Extension = extension,
-            Module = module,
-            DocumentType = documentType,
             Status = FileStorageStatus.Draft
         };
     }
 
     public void Update(string? fileName, string? fileUniqueName, decimal? size, string? type,
-        string? path, string? extension, string? module, string? documentType)
+        string? path, string? extension)
     {
         FileName = fileName;
         FileUniqueName = fileUniqueName;
@@ -57,8 +49,6 @@ public class FileStorage : AuditableEntity<long>, IAggregateRoot
         Type = type;
         Path = path;
         Extension = extension;
-        Module = module;
-        DocumentType = documentType;
     }
 
     public void UpdateStatus(FileStorageStatus status)

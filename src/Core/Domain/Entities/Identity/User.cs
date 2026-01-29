@@ -1,6 +1,6 @@
 ﻿using Domain.Common.Contracts;
 using Domain.Common.Events;
-using Domain.Entities.Catalog;
+using Domain.Entities.Common;
 using Domain.Events;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;

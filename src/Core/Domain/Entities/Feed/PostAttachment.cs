@@ -1,5 +1,5 @@
 ﻿using Domain.Common.Contracts;
-using Domain.Entities.Catalog;
+using Domain.Entities.Common;
 
 namespace Domain.Entities.Feed;
 

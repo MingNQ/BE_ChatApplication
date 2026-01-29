@@ -1,4 +1,5 @@
 ﻿using Domain.Common.Contracts;
+using Domain.Entities.Common;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities.Catalog;

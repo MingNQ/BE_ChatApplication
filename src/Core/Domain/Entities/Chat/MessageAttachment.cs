@@ -1,6 +1,6 @@
 ﻿using Domain.Common.Contracts;
 using Domain.Common.Enums;
-using Domain.Entities.Catalog;
+using Domain.Entities.Common;
 
 namespace Domain.Entities.Chat;
 

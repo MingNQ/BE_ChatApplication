@@ -1,17 +1,16 @@
-﻿using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
-using Application.Common.Repositories;
+﻿using Application.Common.Repositories;
 using Application.Common.Services;
 using Application.Common.UnitOfWork;
 using Application.Configurations;
 using Application.Dto.Persistence.Catalog.FileStorages;
-using Domain.Entities.Catalog;
+using Domain.Entities.Common;
 using Mapster;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Infrastructure.Services;
 
@@ -21,26 +20,23 @@ public class FileStorageService(
     IWebHostEnvironment environment,
     IOptions<FileStorageSettingsOptions> fileStorageSettingsOptions) : IFileStorageService
 {
-    private readonly FileStorageSettingsOptions _fileStorageSettingsOptions = fileStorageSettingsOptions.Value;
+    private readonly FileStorageSettingsOptions _fileStorageSettings = fileStorageSettingsOptions.Value;
     private readonly IWriteRepository<FileStorage> _fileStorageRepository = unitOfWork.GetRepository<FileStorage>();
     private readonly HttpClient _httpClient = new();
 
-    public async Task<FileStorageDto> UploadFileAsync(IFormFile file, string module)
+    public async Task<FileStorageDto> UploadFileAsync(IFormFile file)
     {
         FileUploadValidator(file);
 
-        string uploadFolder = _fileStorageSettingsOptions.FullPath;
-        string basePath = _fileStorageSettingsOptions.Path;
+        string uploadFolder = _fileStorageSettings.FullPath;
+        string basePath = _fileStorageSettings.Path;
 
-        if (environment.IsDevelopment())
+        string contentRoot = environment.WebRootPath ?? environment.ContentRootPath;
+        uploadFolder = Path.Combine(contentRoot, basePath.TrimStart('/'));
+
+        if (!Directory.Exists(uploadFolder))
         {
-            string contentRoot = environment.ContentRootPath;
-            uploadFolder = Path.Combine(contentRoot, basePath.TrimStart('/'));
-
-            if (!Directory.Exists(uploadFolder))
-            {
-                Directory.CreateDirectory(uploadFolder);
-            }
+            Directory.CreateDirectory(uploadFolder);
         }
 
         if (string.IsNullOrWhiteSpace(uploadFolder))
@@ -50,31 +46,23 @@ public class FileStorageService(
 
         string uniqueFileName = HandleFileUniqueName(Path.GetFileNameWithoutExtension(file.FileName), Path.GetExtension(file.FileName).ToLowerInvariant());
 
-        // Create directory structure: module/{year}/{month}
         var now = DateTime.UtcNow;
         string year = now.Year.ToString();
-        string month = now.Month.ToString("D2"); // Ensure 2-digit month format
+        string month = now.Month.ToString("D2");
 
-        // Create the relative path structure
-        string relativePath = Path.Combine(module, year, month);
+        string relativePath = Path.Combine(year, month);
         string fullDirectoryPath = Path.Combine(uploadFolder, relativePath);
 
-        // Ensure directory exists
         Directory.CreateDirectory(fullDirectoryPath);
 
-        // Full file path
         string filePath = Path.Combine(fullDirectoryPath, uniqueFileName);
 
-        // Save file to disk
-        await using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            await file.CopyToAsync(stream);
-        }
+        using var stream = new FileStream(filePath, FileMode.Create);
+        await file.CopyToAsync(stream);
 
-        // Create the path for database storage
-        string dbPath = $"{basePath}/{relativePath}".Replace("\\", "/");
+        string dbPath = $"{basePath}/{relativePath}/".Replace("\\", "/");
 
-        var result = await CreateFileStorageAsync(file, uniqueFileName, dbPath, module);
+        var result = await CreateFileStorageAsync(file, uniqueFileName, dbPath);
 
         filePathService.BindFullPaths(result);
 
@@ -102,7 +90,7 @@ public class FileStorageService(
         }
     }
 
-    private async Task<FileStorageDto> CreateFileStorageAsync(IFormFile file, string uniqueName, string path, string module)
+    private async Task<FileStorageDto> CreateFileStorageAsync(IFormFile file, string uniqueName, string path)
     {
         var fileStorage = FileStorage.Create(
             file?.FileName,
@@ -110,9 +98,7 @@ public class FileStorageService(
             file?.Length,
             file?.ContentType,
             $"{path}/{uniqueName}",
-            Path.GetExtension(file?.FileName),
-            module,
-            module);
+            Path.GetExtension(file?.FileName));
 
         var result = await _fileStorageRepository.InsertAsync(fileStorage);
         await unitOfWork.SaveChangesAsync();
@@ -148,7 +134,7 @@ public class FileStorageService(
         return uniqueFileName;
     }
 
-    public async Task<FileStorageDto> CreateFileStorageFromUrlAsync(string linkUrl, string module)
+    public async Task<FileStorageDto> CreateFileStorageFromUrlAsync(string linkUrl)
     {
         if (string.IsNullOrWhiteSpace(linkUrl))
         {
@@ -179,9 +165,7 @@ public class FileStorageService(
                 fileSize,
                 contentType,
                 linkUrl,
-                extension,
-                module,
-                module);
+                extension);
 
             var result = await _fileStorageRepository.InsertAsync(fileStorage);
             await unitOfWork.SaveChangesAsync();

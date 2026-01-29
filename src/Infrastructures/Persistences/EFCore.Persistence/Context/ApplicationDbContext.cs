@@ -1,7 +1,7 @@
 using Application.Common.Events;
 using Application.Common.Interfaces;
-using Domain.Entities.Catalog;
 using Domain.Entities.Chat;
+using Domain.Entities.Common;
 using Domain.Entities.Feed;
 using Domain.Entities.Identity;
 using Domain.Entities.Social;
