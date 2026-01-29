@@ -13,8 +13,6 @@ public class FileStorageDto : IDto
     public string? Path { get; set; }
     public string? FullPathUrl { get; set; }
     public string? Extension { get; set; }
-    public string? Module { get; set; }
-    public string DocumentType { get; set; } = string.Empty;
     public FileStorageStatus Status { get; set; }
 }
 

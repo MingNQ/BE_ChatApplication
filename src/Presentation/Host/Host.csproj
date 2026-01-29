@@ -23,4 +23,8 @@
     <ProjectReference Include="..\..\Infrastructures\Migrators\Migrators.MSSQL\Migrators.MSSQL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

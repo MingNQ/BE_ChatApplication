@@ -60,7 +60,7 @@ public class FileStorageService(
         using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream);
 
-        string dbPath = $"{basePath}/{relativePath}/".Replace("\\", "/");
+        string dbPath = $"{basePath}/{relativePath}".Replace("\\", "/");
 
         var result = await CreateFileStorageAsync(file, uniqueFileName, dbPath);
 
