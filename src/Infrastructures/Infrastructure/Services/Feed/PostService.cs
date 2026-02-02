@@ -3,6 +3,7 @@ using Application.Common.Persistence;
 using Application.Cqrs.Feed.Posts.Specs;
 using Application.Cqrs.Social.Friendships.Specs;
 using Application.Interfaces.Services;
+using Domain.Common.Enums;
 using Domain.Entities.Feed;
 using Domain.Entities.Social;
 
@@ -17,15 +18,15 @@ public class PostService(
     {
         var friends = await friendshipRequest.ListAsync(new FriendsSpec(currentUser.UserId), cancellationToken);
         var posts = await postRepository.ListAsync(new PostsSpec(), cancellationToken);
-        //var interests = await postRepository.ListAsync(new UserInterestSpec(currentUser.UserId), cancellationToken);
 
-        var friendIds = friends.Select(friend => new
-        {
-            friend.UserId,
-            friend.FriendId
-        }).ToList();
+        var friendIds = friends
+            .SelectMany(f => new[] { f.UserId, f.FriendId })
+            .Where(id => id != currentUser.UserId)
+            .ToHashSet();
 
-        var feedPosts = posts.Where(p => friendIds.Any(f => f.UserId == p.AuthorId || f.FriendId == p.AuthorId)).ToList();
+        var feedPosts = posts
+            .Where(p => p.AuthorId == currentUser.UserId
+                || friendIds.Contains(p.AuthorId) && p.Visibility != PostVisibilityEnum.Private).ToList();
 
         return feedPosts;
     }

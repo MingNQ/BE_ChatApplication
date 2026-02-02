@@ -26,6 +26,7 @@ public class GetConversationQueryHandler(
                 var lastMessage = c.Messages?.LastOrDefault();
                 var lastMessageSentAt = lastMessage?.SentAt ?? default;
                 var (lastMessageContent, lastMessageContentkey) = lastMessage is null ? (string.Empty, null) : GetLastMessageContent(lastMessage);
+                var lastUserSent = lastMessage?.SenderId ?? default;
 
                 return new RecentConversationDto
                 {
@@ -35,6 +36,7 @@ public class GetConversationQueryHandler(
                     LastMessageContent = lastMessageContent,
                     LastMessageSentAt = lastMessageSentAt,
                     LastMessageContentKey = lastMessageContentkey,
+                    LastUserSent = lastUserSent,
                     UnreadMessagesCount = 0,
                     Members = c.Members
                 };
