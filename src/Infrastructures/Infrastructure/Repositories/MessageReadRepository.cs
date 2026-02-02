@@ -1,4 +1,5 @@
 ﻿using Application.Common.Exceptions;
+using Application.Common.Services;
 using Application.Dto.Chat.Conversations;
 using Application.Dto.Chat.Messages;
 using Application.Dto.Persistence.Catalog.User;
@@ -11,12 +12,11 @@ using Shared.Constants;
 
 namespace Infrastructure.Repositories;
 
-public class MessageReadRepository : IMessageReadRepository
+public class MessageReadRepository(
+    ApplicationDbContext _db,
+    IFilePathService filePathService)
+    : IMessageReadRepository
 {
-    private readonly ApplicationDbContext _db;
-
-    public MessageReadRepository(ApplicationDbContext db) => _db = db;
-
     public async Task<MessagesConversationResponse> GetMessagesAsync(long conversationId, DateTimeOffset? before, int pageSize)
     {
         var conversation = _db.Conversations.Include(m => m.Members)
@@ -38,6 +38,7 @@ public class MessageReadRepository : IMessageReadRepository
             .Take(pageSize + 1)
             .Include(m => m.Sender)
             .Include(m => m.Attachments)
+                .ThenInclude(a => a.FileStorage)
             .Select(m => new MessageDto
             {
                 Id = m.Id,
@@ -48,6 +49,15 @@ public class MessageReadRepository : IMessageReadRepository
                 Attachments = m.Attachments.Adapt<List<MessageAttachmentDto>>(),
                 Sender = m.Sender.Adapt<SortUserInfo>()
             }).ToListAsync();
+
+        foreach (var message in messages)
+        {
+            if (message.Attachments.Count > 0)
+            {
+                var attachments = message.Attachments.Select(a => a.FileStorage!).ToList();
+                filePathService.BindFullPaths(attachments);
+            }
+        }
 
         var hasMore = messages.Count > pageSize;
 

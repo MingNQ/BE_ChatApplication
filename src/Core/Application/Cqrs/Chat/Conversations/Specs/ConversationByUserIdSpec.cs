@@ -12,6 +12,7 @@ public class ConversationByUserIdSpec : Specification<Conversation, Conversation
 
         Query.Include(conversation => conversation.Members);
 
-        Query.Include(conversation => conversation.Messages);
+        Query.Include(conversation => conversation.Messages)
+            .ThenInclude(m => m.Attachments);
     }
 }

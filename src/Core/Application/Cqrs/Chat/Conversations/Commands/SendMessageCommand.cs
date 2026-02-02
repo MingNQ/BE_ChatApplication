@@ -18,7 +18,7 @@ public class SendMessageCommand : IRequest<MessageDto>
     public long SenderId { get; set; }
     public string Content { get; set; } = string.Empty;
     public string ClientTempId { get; set; } = string.Empty;
-    public List<MessageAttachmentDto>? Attachments { get; set; } = [];
+    public List<long>? AttachmentIds { get; set; } = [];
 }
 
 public class SendMessageCommandHandler(
@@ -38,11 +38,11 @@ public class SendMessageCommandHandler(
 
         var message = conversation.SendMessage(request.SenderId, request.Content, request.ClientTempId);
 
-        if (request.Attachments is { Count: > 0 })
+        if (request.AttachmentIds is { Count: > 0 })
         {
-            foreach (var attachment in request.Attachments)
+            foreach (var id in request.AttachmentIds)
             {
-                message.AddAttachment(MessageAttachment.Create(attachment.MessageId, attachment.FileStorageId, attachment.AttachmentType));
+                message.AddAttachment(MessageAttachment.Create(message.Id, id));
             }
         }
 

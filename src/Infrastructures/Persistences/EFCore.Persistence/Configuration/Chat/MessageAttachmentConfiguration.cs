@@ -13,9 +13,6 @@ public class MessageAttachmentConfiguration : IEntityTypeConfiguration<MessageAt
 
         builder.HasKey(ma => ma.Id);
 
-        builder.Property(ma => ma.AttachmentType)
-            .IsRequired();
-
         builder.HasOne(ma => ma.Message)
             .WithMany(m => m.Attachments)
             .HasForeignKey(ma => ma.MessageId)

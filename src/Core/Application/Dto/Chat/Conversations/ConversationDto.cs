@@ -21,6 +21,7 @@ public class RecentConversationDto : IDto
     public ConversationType Type { get; set; }
     public string? Name { get; set; }
     public string? LastMessageContent { get; set; }
+    public string? LastMessageContentKey { get; set; }
     public DateTimeOffset? LastMessageSentAt { get; set; }
     public int UnreadMessagesCount { get; set; }
     public List<ConversationMemberDto>? Members { get; set; }
