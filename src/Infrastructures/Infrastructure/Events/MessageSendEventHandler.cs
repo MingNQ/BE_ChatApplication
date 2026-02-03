@@ -24,11 +24,10 @@ public class MessageSendEventHandler(
             .Select(m => m.UserId)
             .ToList();
 
-        foreach (var receiverId in receiverIds!)
+        foreach (var userId in receiverIds!)
         {
-            await hub
-                .Clients
-                .Group(message.ConversationId.ToString())
+            await hub.Clients
+                .User(userId.ToString())
                 .SendAsync("MessageReceived", new
                 {
                     message.Id,
@@ -38,8 +37,11 @@ public class MessageSendEventHandler(
                     message.Content,
                     message.Attachments,
                     ClientTempId = clientTempId
-                }, cancellationToken: cancellationToken);
+                }, cancellationToken);
+        }
 
+        foreach (var receiverId in receiverIds.Where(id => id != message.SenderId))
+        {
             var presence = await presenceService.GetPresenceAsync(receiverId);
 
             if (presence.Status == UserPresenceStatusEnum.Online)

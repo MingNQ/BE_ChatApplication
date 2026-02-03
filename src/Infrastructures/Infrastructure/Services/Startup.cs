@@ -33,6 +33,7 @@ internal static class Startup
         services.AddTransient<IFileStorageService, FileStorageService>();
 
         services.AddTransient<IPostService, PostService>();
+        services.AddTransient<IFriendshipService, FriendshipService>();
 
         services.AddSingleton<IPresenceService, InMemoryPresenceService>();
         services.AddHostedService<PresenceCleanupJob>();

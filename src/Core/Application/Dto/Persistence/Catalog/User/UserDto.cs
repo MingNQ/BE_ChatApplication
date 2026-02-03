@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Application.Dto.Authorization.Role;
 using Application.Dto.Persistence.Catalog.FileStorages;
+using Application.Dto.Social;
 
 namespace Application.Dto.Persistence.Catalog.User;
 
@@ -41,4 +42,9 @@ public class UpdateUserPasswordInput
     public string OldPassword { get; set; } = string.Empty;
     public string NewPassword { get; set; } = string.Empty;
     public string RePassword { get; set; } = string.Empty;
+}
+
+public class UserPresenceDto : SortUserInfo
+{
+    public PresenceDto? Presence { get; set; }
 }
